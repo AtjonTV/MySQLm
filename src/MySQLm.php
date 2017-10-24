@@ -1,5 +1,5 @@
 <?php
-    class MySQLm # Version 1.2:23_10_2017
+    class MySQLm # Version 1.3:24_10_2017
     {
         /* Private Variables */
         private $connectionOpen = false;
@@ -64,18 +64,23 @@
         /* Set a QueryString to execute later */
         function setQueryString($query)
         {
-            $this->queryString;
+            if($this->connectionOpen)
+                $this->queryString;
+            else
+                $this->throwError("ERROR, the connection seams to be closed. Run connect() or reconnect() to make a connection", "x");
         }
 
         /* Execute stored query string */
         function executeQuery()
         {
-           if($this->connectionOpen)
-           {
+            if($this->connectionOpen)
+            {
                 $lresult = $this->connection->query($this->queryString) 
-                    or $this->throwError("There was an error while querying the database.", "");
+                    or $this->throwError("There was an error while querying the database.", "x");
                 $this->lastResult = $lresult;
-           }
+            }
+            else
+                $this->throwError("ERROR, the connection seams to be closed. Run connect() or reconnect() to make a connection", "x");
         }
 
         /* Execute query string */
@@ -102,6 +107,8 @@
                     return $this->lastResult;
                 }
             }
+            else
+                $this->throwError("ERROR, the connection seams to be closed. Run connect() or reconnect() to make a connection", "x");
         }
 
         /* Execute query string */
@@ -113,6 +120,8 @@
                     $this->throwError("There was an error while querying the database.", "");
                 $this->lastResult = $lresult;
             }
+            else
+                $this->throwError("ERROR, the connection seams to be closed. Run connect() or reconnect() to make a connection", "x");
         }
 
         /* Execute query string */
@@ -124,6 +133,8 @@
                     $this->throwError("There was an error while querying the database.", "");
                 $this->lastResult = $lresult;
             }
+            else
+                $this->throwError("ERROR, the connection seams to be closed. Run connect() or reconnect() to make a connection", "x");
         }
 
         /* Execute query string */
@@ -135,6 +146,8 @@
                     $this->throwError("There was an error while querying the database.", "");
                 $this->lastResult = $lresult;
             }
+            else
+                $this->throwError("ERROR, the connection seams to be closed. Run connect() or reconnect() to make a connection", "x");
         }
 
         /* Execute query string */
@@ -146,6 +159,8 @@
                     $this->throwError("There was an error while querying the database.", "");
                 $this->lastResult = $lresult;
             }
+            else
+                $this->throwError("ERROR, the connection seams to be closed. Run connect() or reconnect() to make a connection", "x");
         }
 
         /* if mysqli::ping() is true it returns true, if mysqli::ping() && connectionOpen is true it returns true, else it always returns false */
