@@ -1,5 +1,5 @@
 <?php
-    class MySQLm # Version 1.3:24_10_2017
+    class MySQLm # Version 1.3.4:24_10_2017
     {
         /* Private Variables */
         private $connectionOpen = false;
