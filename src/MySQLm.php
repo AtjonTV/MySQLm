@@ -11,6 +11,8 @@
         /* Constructor for the Object to directly open a connection */
         function __construct($host, $port, $user, $pass, $db) 
         {
+            $this->checkVars(array($host, $port, $user, $pass, $db), "__construct($host, $port, $user, $pass, $db)");
+
             $this->connection = @new mysqli($host, $user, $pass, $db, $port);
 
             if($this->connection->connect_error)
@@ -29,6 +31,8 @@
         /* Function to open a connection */
         function connect($host, $port, $user, $pass, $db) 
         {
+            $this->checkVars(array($host, $port, $user, $pass, $db), "connection($host, $port, $user, $pass, $db)");            
+
             $this->connection = @new mysqli($host, $user, $pass, $db, $port);
             
             if($this->connection->connect_error)
@@ -64,6 +68,8 @@
         /* Set a QueryString to execute later */
         function setQueryString($query)
         {
+            $this->checkVars(array($query), "setQueryString($query)");
+
             if($this->connectionOpen)
                 $this->queryString;
             else
@@ -86,6 +92,7 @@
         /* Execute query string */
         function executeSelect($query, $returnType)
         {
+            $this->checkVars(array($query, $returnType), "executeSelect($query, $returnType)");
             if($this->connectionOpen)
             {
                 $lresult = $this->connection->query($query)
@@ -114,6 +121,7 @@
         /* Execute query string */
         function executeInsert($query)
         {
+            $this->checkVars(array($query), "executeInsert($query)");
             if($this->connectionOpen)
             {
                 $lresult = $this->connection->query($query) or
@@ -127,6 +135,7 @@
         /* Execute query string */
         function executeDelete($query)
         {
+            $this->checkVars(array($query), "executeDelete($query)");
             if($this->connectionOpen)
             {
                 $lresult = $this->connection->query($query) or
@@ -140,6 +149,7 @@
         /* Execute query string */
         function executeUpdate($query)
         {
+            $this->checkVars(array($query), "executeUpdate($query)");
             if($this->connectionOpen)
             {
                 $lresult = $this->connection->query($query) or
@@ -153,6 +163,7 @@
         /* Execute query string */
         function executeDrop($query)
         {
+            $this->checkVars(array($query), "executeDrop($query)");
             if($this->connectionOpen)
             {
                 $lresult = $this->connection->query($query) or
@@ -177,6 +188,8 @@
         /* Kills the Script and displays a error Message */
         function throwError($message, $action)
         {
+            $this->checkVars(array($query), "throwError($message, $action)");
+
             if(!isset($action) || empty($action))
                 $action = "";
             switch($action)
@@ -201,6 +214,7 @@
         /* Closes Open Connection, removes content from Variables [if action "without" is selectet, the varname is not removed]*/
         function dispose($action, $varname)
         {
+            $this->checkVars(array($query), "dispose($action, $varname)");
             if($action === "without")
             {
                 switch($varname)
@@ -267,6 +281,21 @@
                 $this->queryString = null;
                 $this->lastResult = null;
             }
+        }
+
+        /* Checks if given variables are null or empty, if so it throws an error */
+        private function checkVars($ar, $loc)
+        {
+            $ok = true;
+
+            foreach($ar as $a)
+            {
+                if(!isset($a) || empty($a))
+                    $ok = false;
+            }
+
+            if(!$ok)
+                $this->throwError("One or more variables in '$loc' are null or empty", "x");
         }
     }
 ?>
