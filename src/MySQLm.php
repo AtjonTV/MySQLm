@@ -188,8 +188,6 @@
         /* Kills the Script and displays a error Message */
         function throwError($message, $action)
         {
-            $this->checkVars(array($query), "throwError($message, $action)");
-
             if(!isset($action) || empty($action))
                 $action = "";
             switch($action)
@@ -214,7 +212,7 @@
         /* Closes Open Connection, removes content from Variables [if action "without" is selectet, the varname is not removed]*/
         function dispose($action, $varname)
         {
-            $this->checkVars(array($query), "dispose($action, $varname)");
+            $this->checkVars(array($action, $varname), "dispose($action, $varname)");
             if($action === "without")
             {
                 switch($varname)
