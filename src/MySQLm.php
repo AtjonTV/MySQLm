@@ -1,5 +1,5 @@
 <?php
-    class MySQLm # Version 1.3.5:24_10_2017
+    class MySQLm # Version 1.3.6:25_10_2017
     {
         /* Private Variables */
         private $connectionOpen = false;
@@ -7,13 +7,14 @@
         private $connection = null;
         private $queryString = null;
         private $lastResult = null;
+        private $lastInternalError = null;
 
         /* Constructor for the Object to directly open a connection */
         function __construct($host, $port, $user, $pass, $db) 
         {
             if(empty($host)&&empty($port)&&empty($user)&&empty($pass)&&empty($db))
             {
-
+                $this->lastInternalError = "at __construct: NO ARGUMENTS GIVEN, CONNECTION LESS OBJECT.";
             }
             else{
                 $this->checkVars(array($host, $port, $user, $pass, $db), "__construct($host, $port, $user, $pass, $db)");
@@ -278,6 +279,12 @@
             return $this->lastResult;
         }
 
+        /* Return the last Script Internal Error */
+        function getLastInternalError()
+        {
+            return $this->lastInternalError;
+        }
+
         /* Closes Open Connection, removes content from Variables [if action "without" is selectet, the varname is not removed]*/
         function dispose($action, $varname)
         {
@@ -292,6 +299,7 @@
                         $this->connection = null;
                         $this->queryString = null;
                         $this->lastResult = null;
+                        $this->lastInternalError = null;
                         break;
                     case "connectionInfo":
                         $this->closeConnection();
@@ -299,6 +307,7 @@
                         $this->connection = null;
                         $this->queryString = null;
                         $this->lastResult = null;
+                        $this->lastInternalError = null;
                         break;
                     case "connection":
                         $this->closeConnection();
@@ -306,6 +315,7 @@
                         $this->connectionInfo = null;
                         $this->queryString = null;
                         $this->lastResult = null;
+                        $this->lastInternalError = null;
                         break;
                     case "queryString":
                         $this->closeConnection();
@@ -313,6 +323,7 @@
                         $this->connectionInfo = null;
                         $this->connection = null;
                         $this->lastResult = null;
+                        $this->lastInternalError = null;
                         break;
                     case "lastResult":
                         $this->closeConnection();
@@ -320,6 +331,15 @@
                         $this->connectionInfo = null;
                         $this->connection = null;
                         $this->queryString = null;
+                        $this->lastInternalError = null;
+                        break;
+                    case "lastInternalError":
+                        $this->closeConnection();
+                        $this->connectionOpen = false;
+                        $this->connectionInfo = null;
+                        $this->connection = null;
+                        $this->queryString = null;
+                        $this->lastResult = null;
                         break;
                     default:
                         $this->closeConnection();
@@ -328,6 +348,7 @@
                         $this->connection = null;
                         $this->queryString = null;
                         $this->lastResult = null;
+                        $this->lastInternalError = null;
                         break;
                 }
             }
@@ -339,6 +360,7 @@
                 $this->connection = null;
                 $this->queryString = null;
                 $this->lastResult = null;
+                $this->lastInternalError = null;
             }
             else
             {
@@ -347,6 +369,7 @@
                 $this->connection = null;
                 $this->queryString = null;
                 $this->lastResult = null;
+                $this->lastInternalError = null;
             }
         }
 
@@ -360,7 +383,7 @@
                 if(!isset($a) || empty($a))
                     $ok = false;
             }
-
+            $this->lastInternalError = "at checkVars: AN EMPTY OR NULL ARGUMENTS WAS GIVEN AT $loc";
             if(!$ok)
                 $this->throwError("One or more variables in '$loc' are null or empty", "x");
         }
