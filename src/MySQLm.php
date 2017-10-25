@@ -1,5 +1,5 @@
 <?php
-    class MySQLm # Version 1.3.6:25_10_2017
+    class MySQLm # Version 1.3.7:25_10_2017
     {
         /* Private Variables */
         private $connectionOpen = false;
@@ -66,6 +66,7 @@
                 $this->throwError("An Error Occured while opening a connection to the database: ".$this->connection->connect_error, "dispose");
 
             $this->connectionOpen = true;
+            $this->lastInternalError = "at connect_ndb: COULD NOT GIVE ONE PARAMETER TO connectionInfo; DaBa -> NO DATABASE TO CONNECT TO.";
             $this->connectionInfo = array(
                 "Host" => $host,
                 "User" => $user,
@@ -252,7 +253,10 @@
             else if ($this->connection->ping())
                 return true;
             else
+            {
+                $this->lastInternalError = "at checkConnection: THE CONNECTION IS CLOSED.";
                 return false;
+            }
         }
 
         /* Kills the Script and displays a error Message */
@@ -383,7 +387,7 @@
                 if(!isset($a) || empty($a))
                     $ok = false;
             }
-            $this->lastInternalError = "at checkVars: AN EMPTY OR NULL ARGUMENTS WAS GIVEN AT $loc";
+            
             if(!$ok)
                 $this->throwError("One or more variables in '$loc' are null or empty", "x");
         }
