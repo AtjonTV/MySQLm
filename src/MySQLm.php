@@ -1,5 +1,13 @@
 <?php
-    class MySQLm # Version 1.3.5:24_10_2017
+    /*
+     *  Copyright 2015-2017 AtjonTV (Thomas Obernosterer)
+     * 
+     *  This is an OSPL Project
+     *      OSPL is an License by ATVG-Studios: http://atvg-studios.at/OSPLv1.1
+     * 
+     *  Documentation of MySQLm can be found on http://Github.com/AtjonTV/MySQLm soon.
+     */
+    class MySQLm # Version 1.3.8:25_10_2017
     {
         /* Private Variables */
         private $connectionOpen = false;
@@ -7,13 +15,14 @@
         private $connection = null;
         private $queryString = null;
         private $lastResult = null;
+        private $lastInternalError = null;
 
         /* Constructor for the Object to directly open a connection */
         function __construct($host, $port, $user, $pass, $db) 
         {
             if(empty($host)&&empty($port)&&empty($user)&&empty($pass)&&empty($db))
             {
-
+                $this->lastInternalError = "at __construct: NO ARGUMENTS GIVEN, CONNECTION LESS OBJECT.";
             }
             else{
                 $this->checkVars(array($host, $port, $user, $pass, $db), "__construct($host, $port, $user, $pass, $db)");
@@ -65,6 +74,7 @@
                 $this->throwError("An Error Occured while opening a connection to the database: ".$this->connection->connect_error, "dispose");
 
             $this->connectionOpen = true;
+            $this->lastInternalError = "at connect_ndb: COULD NOT GIVE ONE PARAMETER TO connectionInfo; DaBa -> NO DATABASE TO CONNECT TO.";
             $this->connectionInfo = array(
                 "Host" => $host,
                 "User" => $user,
@@ -251,7 +261,10 @@
             else if ($this->connection->ping())
                 return true;
             else
+            {
+                $this->lastInternalError = "at checkConnection: THE CONNECTION IS CLOSED.";
                 return false;
+            }
         }
 
         /* Kills the Script and displays a error Message */
@@ -278,6 +291,12 @@
             return $this->lastResult;
         }
 
+        /* Return the last Script Internal Error */
+        function getLastInternalError()
+        {
+            return $this->lastInternalError;
+        }
+
         /* Closes Open Connection, removes content from Variables [if action "without" is selectet, the varname is not removed]*/
         function dispose($action, $varname)
         {
@@ -292,6 +311,7 @@
                         $this->connection = null;
                         $this->queryString = null;
                         $this->lastResult = null;
+                        $this->lastInternalError = null;
                         break;
                     case "connectionInfo":
                         $this->closeConnection();
@@ -299,6 +319,7 @@
                         $this->connection = null;
                         $this->queryString = null;
                         $this->lastResult = null;
+                        $this->lastInternalError = null;
                         break;
                     case "connection":
                         $this->closeConnection();
@@ -306,6 +327,7 @@
                         $this->connectionInfo = null;
                         $this->queryString = null;
                         $this->lastResult = null;
+                        $this->lastInternalError = null;
                         break;
                     case "queryString":
                         $this->closeConnection();
@@ -313,6 +335,7 @@
                         $this->connectionInfo = null;
                         $this->connection = null;
                         $this->lastResult = null;
+                        $this->lastInternalError = null;
                         break;
                     case "lastResult":
                         $this->closeConnection();
@@ -320,6 +343,15 @@
                         $this->connectionInfo = null;
                         $this->connection = null;
                         $this->queryString = null;
+                        $this->lastInternalError = null;
+                        break;
+                    case "lastInternalError":
+                        $this->closeConnection();
+                        $this->connectionOpen = false;
+                        $this->connectionInfo = null;
+                        $this->connection = null;
+                        $this->queryString = null;
+                        $this->lastResult = null;
                         break;
                     default:
                         $this->closeConnection();
@@ -328,6 +360,7 @@
                         $this->connection = null;
                         $this->queryString = null;
                         $this->lastResult = null;
+                        $this->lastInternalError = null;
                         break;
                 }
             }
@@ -339,6 +372,7 @@
                 $this->connection = null;
                 $this->queryString = null;
                 $this->lastResult = null;
+                $this->lastInternalError = null;
             }
             else
             {
@@ -347,6 +381,7 @@
                 $this->connection = null;
                 $this->queryString = null;
                 $this->lastResult = null;
+                $this->lastInternalError = null;
             }
         }
 
@@ -360,7 +395,7 @@
                 if(!isset($a) || empty($a))
                     $ok = false;
             }
-
+            
             if(!$ok)
                 $this->throwError("One or more variables in '$loc' are null or empty", "x");
         }
