@@ -1,0 +1,16 @@
+# If you want to use this Script on your own server,
+# without downloading anything, 
+# make sure that 'allow_url_include' is set to 'On' in,
+# the PHP.ini file (On Linux with apache2 and php7: /etc/php/7.0/apache2/php.ini)
+
+# Including the newest development build of MySQLm 1.3
+include 'https://raw.githubusercontent.com/AtjonTV/MySQLm/dev-1.3/src/MySQLm.php';
+
+# Including the newest version and build of MySQLm
+#include 'https://raw.githubusercontent.com/AtjonTV/MySQLm/master/src/MySQLm.php';
+
+
+# Otherwise download the MySQMm.php file.
+
+# Including the downlaoded version
+include 'MySQLm.php';
