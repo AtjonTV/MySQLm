@@ -3,12 +3,19 @@ MySQLm is an 'Library' made to be used to connect to a MySQL Server.
 MySQLm is made with OOP (Object Oriented Programming) and used MySQLi [OOP]
 
 The newest version of MySQLm is **1.4.0** Released on **3rd Nov. 2017**
+
 Development branch:
+
 `https://github.com/AtjonTV/MySQLm/tree/dev-1.4`
+
 Development Build:
+
 `https://raw.githubusercontent.com/AtjonTV/MySQLm/dev-1.4/src/MySQLm.php`
+
 Release Build:
+
 `https://raw.githubusercontent.com/AtjonTV/MySQLm/master/src/MySQLm.php`
+
 
 # How to use MySQLm?
 See the wiki: https://github.com/AtjonTV/MySQLm/wiki
