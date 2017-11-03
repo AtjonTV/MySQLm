@@ -7,7 +7,7 @@
      * 
      *  Documentation of MySQLm can be found on http://Github.com/AtjonTV/MySQLm soon.
      */
-    class MySQLm # Version 1.3.8:25_10_2017
+    class MySQLm # Version 1.4.0:03_11_2017
     {
         /* Private Variables */
         private $connectionOpen = false;
@@ -146,7 +146,7 @@
             $this->checkVars(array($query), "executeCreate($query)");
             if($this->connectionOpen)
             {
-                $lresult = $this->connection->query($query) or
+                $lresult = $this->connection->query("CREATE ".$query) or
                     $this->throwError("There was an error while querying the database. [executeCreate($query);] [".$this->connection->error."]", "");
                 $this->lastResult = $lresult;
             }
@@ -160,7 +160,7 @@
             $this->checkVars(array($query), "executeUse($query)");
             if($this->connectionOpen)
             {
-                $lresult = $this->connection->query($query) or
+                $lresult = $this->connection->query("USE ".$query) or
                     $this->throwError("There was an error while querying the database. [executeUse($query);] [".$this->connection->error."]", "");
                 $this->lastResult = $lresult;
             }
@@ -174,7 +174,7 @@
             $this->checkVars(array($query, $returnType), "executeSelect($query, $returnType)");
             if($this->connectionOpen)
             {
-                $lresult = $this->connection->query($query)
+                $lresult = $this->connection->query("SELECT ".$query)
                     or $this->throwError("Error while querying the Database. [executeSelect($query, $returnType);] [".$this->connection->error."]", "x");
                 if($returnType == "2D_Array")
                 {
@@ -203,7 +203,7 @@
             $this->checkVars(array($query), "executeInsert($query)");
             if($this->connectionOpen)
             {
-                $lresult = $this->connection->query($query) or
+                $lresult = $this->connection->query("INSERT ".$query) or
                     $this->throwError("There was an error while querying the database. [executeInsert($query);] [".$this->connection->error."]", "");
                 $this->lastResult = $lresult;
             }
@@ -217,7 +217,7 @@
             $this->checkVars(array($query), "executeDelete($query)");
             if($this->connectionOpen)
             {
-                $lresult = $this->connection->query($query) or
+                $lresult = $this->connection->query("DELETE ".$query) or
                     $this->throwError("There was an error while querying the database. [executeDelete($query);] [".$this->connection->error."]", "");
                 $this->lastResult = $lresult;
             }
@@ -231,7 +231,7 @@
             $this->checkVars(array($query), "executeUpdate($query)");
             if($this->connectionOpen)
             {
-                $lresult = $this->connection->query($query) or
+                $lresult = $this->connection->query("UPDATE ".$query) or
                     $this->throwError("There was an error while querying the database. [executeUpdate($query);] [".$this->connection->error."]", "");
                 $this->lastResult = $lresult;
             }
@@ -245,7 +245,7 @@
             $this->checkVars(array($query), "executeDrop($query)");
             if($this->connectionOpen)
             {
-                $lresult = $this->connection->query($query) or
+                $lresult = $this->connection->query("DROP ".$query) or
                     $this->throwError("There was an error while querying the database. [executeDrop($query);] [".$this->connection->error."]", "");
                 $this->lastResult = $lresult;
             }
