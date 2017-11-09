@@ -6,16 +6,16 @@
     echo "Creating MySQLm Object ..<br>";
     $msql = new MySQLm("","","","","");
     echo "Created.<br>Connecting to Server without DB ..<br>";
-    $msql->connect_ndb('localhost', 3306, 'root', '');
+    $msql->connect_ndb('localhost', 3306, 'root', '55#admin683455');
     echo "Connected!<br>Checking Connection..<br>";
     if($msql->checkConnection())
     {
         echo "Connection OK!<br>Creating Database..<br>";
-        $msql->executeCreate("DATABASE mysqlm_test;");
+        $msql->executeCreate("DATABASE IF NOT EXISTS mysqlm_test;");
         echo "Created!<br>Selecting Database ..<br>";
         $msql->selectDatabase("mysqlm_test");
         echo "Selected!<br>Creating Table..<br>";
-        $msql->executeCreate("TABLE test ( id int NOT NULL AUTO_INCREMENT, num int, hash varchar(128), PRIMARY KEY (id));");
+        $msql->executeCreate("TABLE IF NOT EXISTS test ( id int NOT NULL AUTO_INCREMENT, num int, hash varchar(128), PRIMARY KEY (id));");
         echo "Created!<br>Starting Loop..<br>";
         for($i = 0; $i < 50; $i++)
         {
@@ -26,7 +26,7 @@
             echo "Inserted!<br>";
         }
         echo "Loop finished!<br>Selecting Data and getting result ..<br>";
-        $msql->executeSelect("num, hash FROM mysqlm_test.test WHERE num = 34", "2D_Array");
+        $msql->executeSelect("num, hash FROM mysqlm_test.test WHERE num = 34", E_ReturnType::TWODIMENSIONAL_ARRAY);
         $res = $msql->getResult();
         echo "Selected!<br>Checking Result..<br>";
         if($res != null)

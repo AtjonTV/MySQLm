@@ -7,7 +7,7 @@
      * 
      *  Documentation of MySQLm can be found on http://Github.com/AtjonTV/MySQLm soon.
      */
-    class MySQLm # Version 1.4.0:03_11_2017
+    class MySQLm # Version 1.4.1:07_11_2017
     {
         /* Private Variables */
         private $connectionOpen = false;
@@ -171,12 +171,12 @@
         /* Execute query string */
         function executeSelect($query, $returnType)
         {
-            $this->checkVars(array($query, $returnType), "executeSelect($query, $returnType)");
+            $this->checkVars(array($query), "executeSelect($query)");
             if($this->connectionOpen)
             {
                 $lresult = $this->connection->query("SELECT ".$query)
                     or $this->throwError("Error while querying the Database. [executeSelect($query, $returnType);] [".$this->connection->error."]", "x");
-                if($returnType == "2D_Array")
+                if($returnType == E_ReturnType::TWODIMENSIONAL_ARRAY)
                 {
                     $llresult = array();
                     while($res = mysqli_fetch_array($lresult, MYSQLI_NUM))
@@ -399,5 +399,11 @@
             if(!$ok)
                 $this->throwError("One or more variables in '$loc' are null or empty", "x");
         }
+    }
+
+    abstract class E_ReturnType
+    {
+        const MYSQL_TABLE = 1;
+        const TWODIMENSIONAL_ARRAY = 2;
     }
 ?>
