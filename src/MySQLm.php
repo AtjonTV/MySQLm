@@ -7,9 +7,10 @@
      * 
      *  Documentation of MySQLm can be found on http://Github.com/AtjonTV/MySQLm soon.
      */
-    class MySQLm # Version 1.4.1:07_11_2017
+    class MySQLm # Version 1.4.1:09_11_2017
     {
         /* Private Variables */
+        private $version = "1.4.1:09_11_2017";
         private $connectionOpen = false;
         private $connectionInfo = null;
         private $connection = null;
@@ -398,6 +399,91 @@
             
             if(!$ok)
                 $this->throwError("One or more variables in '$loc' are null or empty", "x");
+        }
+
+        /* Return the version of the MySQL Manager */
+        function getVersion()
+        {
+            return $this->version;
+        }
+    }
+
+    class SQLite3m # Version 1.0.0:09_11_2017
+    {
+        /* Private Variables */
+        private $version = "1.0.0:09_11_2017";
+        private $connectionOpen = false;
+        private $connection = null;
+        private $connectionInfo = null;
+        private $queryString = null;
+        private $lastResult = null;
+        private $lastInternalError = null;
+
+        function __construct($sqlite_3_File)
+        {
+            $connection = new SQLite3($sqlite_3_File);
+            $connectionOpen = true;
+            $connectionInfo = array("DB_FILE"=>$sqlite_3_File);
+        }
+
+        /* @deprecated */
+        function executeSelect($query, $returnType)
+        {
+            trigger_error("Deprecated function called.", E_USER_NOTICE);
+            $this->checkVars(array($query), "executeSelect($query)");
+            if($this->connectionOpen)
+            {
+                $lresult = $this->connection->exec("SELECT ".$query)
+                    or $this->throwError("Error while querying the Database. [executeSelect($query, $returnType);]", "x");
+                if($returnType == E_ReturnType::TWODIMENSIONAL_ARRAY)
+                {
+                    $llresult = array();
+                    while($res = mysqli_fetch_array($lresult, MYSQLI_NUM))
+                    {
+                        array_push($llresult, $res);
+                    }
+                    $this->lastResult = $llresult;
+                    mysqli_free_result($lresult);
+                    return $this->lastResult;
+                }
+                else if ($returnType == "MySQL_Table")
+                {
+                    $llresult = array();
+                    while($res = $lresult->fetchArray(SQLITE3_ASSOC))
+                    {
+                        array_push($llresult, $res);
+                    }
+                    $this->lastResult = $lresult;
+                    return $this->lastResult;
+                }
+            }
+            else
+                $this->throwError("ERROR, the connection seams to be closed. Run connect() or reconnect() to make a connection", "x");
+        }
+
+        function execute($query)
+        {
+            $this->checkVars(array($query), "executeSelect($query)");
+            if($this->connectionOpen)
+            {
+                $lresult = $this->connection->exec($query)
+                    or $this->throwError("Error while querying the Database. [executeSelect($query, $returnType);]", "x");
+                return $lresult;
+            }
+            else
+                $this->throwError("ERROR, the connection seams to be closed. Run connect() or reconnect() to make a connection", "x");
+        }
+
+        /* Return the version of the SQLite3 Manager */
+        function getVersion()
+        {
+            return $this->version;
+        }
+
+        /* Return the version of SQLite3 */
+        function getSQLiteVersion()
+        {
+            return SQLite3::version();
         }
     }
 
