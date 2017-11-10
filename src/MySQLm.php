@@ -7,10 +7,10 @@
      * 
      *  Documentation of MySQLm can be found on http://Github.com/AtjonTV/MySQLm soon.
      */
-    class MySQLm # Version 1.4.1:09_11_2017
+    class MySQLm # Version 1.4.2:10_11_2017
     {
         /* Private Variables */
-        private $version = "1.4.1:09_11_2017";
+        private $version = "1.4.2:10_11_2017";
         private $connectionOpen = false;
         private $connectionInfo = null;
         private $connection = null;
@@ -399,6 +399,12 @@
             
             if(!$ok)
                 $this->throwError("One or more variables in '$loc' are null or empty", "x");
+        }
+
+        /* Escape String to get Real SQL Code */
+        function escapeString($sql_query)
+        {
+            return $this->connection->real_escape_string($sql_query);
         }
 
         /* Return the version of the MySQL Manager */
