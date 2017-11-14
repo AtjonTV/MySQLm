@@ -7,10 +7,11 @@
      * 
      *  Documentation of MySQLm can be found on http://Github.com/AtjonTV/MySQLm soon.
      */
-    class MySQLm # Version 1.4.2:10_11_2017
+    class MySQLm # Version 1.4.4:14_11_2017
     {
         /* Private Variables */
-        private $version = "1.4.2:10_11_2017";
+        private $version = "1.4.4:14_11_2017";
+        private $version_arr = array('major'=>1,'minor'=>4,'patch'=>4);
         private $connectionOpen = false;
         private $connectionInfo = null;
         private $connection = null;
@@ -19,17 +20,21 @@
         private $lastInternalError = null;
 
         /* Constructor for the Object to directly open a connection */
-        function __construct($host, $port, $user, $pass, $db) 
+        function __construct($host, $port, $user, $pass, $db, $charset) 
         {
-            if(empty($host)&&empty($port)&&empty($user)&&empty($pass)&&empty($db))
+            if(empty($host)&&empty($port)&&empty($user)&&empty($pass)&&empty($db)&&empty($charset))
             {
                 $this->lastInternalError = "at __construct: NO ARGUMENTS GIVEN, CONNECTION LESS OBJECT.";
             }
             else{
-                $this->checkVars(array($host, $port, $user, $pass, $db), "__construct($host, $port, $user, $pass, $db)");
+                $this->checkVars(array($host, $port, $user, $pass, $db, $charset), "__construct($host, $port, $user, $pass, $db, $charset)");
 
                 $this->connection = @new mysqli($host, $user, $pass, $db, $port);
                 
+                if (!$this->connection->set_charset($charset)) {
+                    $this->throwError("An Error Occured while loading charset $charset", "dispose");
+                }
+
                 if($this->connection->connect_error)
                     $this->throwError("An Error Occured while opening a connection to the database: ".$this->connection->connect_error, "dispose");
     
@@ -408,16 +413,20 @@
         }
 
         /* Return the version of the MySQL Manager */
-        function getVersion()
+        function getVersion($asString)
         {
-            return $this->version;
+            if($asString)
+                return $this->version;
+            else
+                return $this->version_arr;
         }
     }
 
-    class SQLite3m # Version 1.0.0:09_11_2017
+    class SQLite3m # Version 1.0.01:14_11_2017
     {
         /* Private Variables */
-        private $version = "1.0.0:09_11_2017";
+        private $version = "1.0.1:14_11_2017";
+        private $version_arr = array('major'=>1,'minor'=>0,'patch'=>1);
         private $connectionOpen = false;
         private $connection = null;
         private $connectionInfo = null;
@@ -432,33 +441,27 @@
             $connectionInfo = array("DB_FILE"=>$sqlite_3_File);
         }
 
-        /* @deprecated */
         function executeSelect($query, $returnType)
         {
             trigger_error("Deprecated function called.", E_USER_NOTICE);
             $this->checkVars(array($query), "executeSelect($query)");
             if($this->connectionOpen)
             {
-                $lresult = $this->connection->exec("SELECT ".$query)
+                $lresult = $this->connection->query("SELECT ".$query)
                     or $this->throwError("Error while querying the Database. [executeSelect($query, $returnType);]", "x");
+                
                 if($returnType == E_ReturnType::TWODIMENSIONAL_ARRAY)
                 {
                     $llresult = array();
-                    while($res = mysqli_fetch_array($lresult, MYSQLI_NUM))
+                    while($res = $llresult->fatchArray())
                     {
                         array_push($llresult, $res);
                     }
                     $this->lastResult = $llresult;
-                    mysqli_free_result($lresult);
                     return $this->lastResult;
                 }
-                else if ($returnType == "MySQL_Table")
+                else if ($returnType == E_ReturnType::SQLITE_TABLE)
                 {
-                    $llresult = array();
-                    while($res = $lresult->fetchArray(SQLITE3_ASSOC))
-                    {
-                        array_push($llresult, $res);
-                    }
                     $this->lastResult = $lresult;
                     return $this->lastResult;
                 }
@@ -467,13 +470,26 @@
                 $this->throwError("ERROR, the connection seams to be closed. Run connect() or reconnect() to make a connection", "x");
         }
 
-        function execute($query)
+        function executeInsert($query)
         {
-            $this->checkVars(array($query), "executeSelect($query)");
+            $this->checkVars(array($query), "executeInsert($query)");
             if($this->connectionOpen)
             {
-                $lresult = $this->connection->exec($query)
-                    or $this->throwError("Error while querying the Database. [executeSelect($query, $returnType);]", "x");
+                $lresult = $this->connection->query('INSERT'.$query)
+                    or $this->throwError("Error while querying the Database. [executeInsert($query);]", "x");
+                return $lresult;
+            }
+            else
+                $this->throwError("ERROR, the connection seams to be closed. Run connect() or reconnect() to make a connection", "x");
+        }
+
+        function execute($query)
+        {
+            $this->checkVars(array($query), "execute($query)");
+            if($this->connectionOpen)
+            {
+                $lresult = $this->connection->query($query)
+                    or $this->throwError("Error while querying the Database. [execute($query);]", "x");
                 return $lresult;
             }
             else
@@ -481,9 +497,12 @@
         }
 
         /* Return the version of the SQLite3 Manager */
-        function getVersion()
+        function getVersion($asString)
         {
-            return $this->version;
+            if($asString)
+                return $this->version;
+            else
+                return $this->version_arr;
         }
 
         /* Return the version of SQLite3 */
@@ -496,6 +515,7 @@
     abstract class E_ReturnType
     {
         const MYSQL_TABLE = 1;
-        const TWODIMENSIONAL_ARRAY = 2;
+        const SQLITE_TABLE = 2;
+        const TWODIMENSIONAL_ARRAY = 3;
     }
 ?>
