@@ -7,11 +7,11 @@
      * 
      *  Documentation of MySQLm can be found on http://Github.com/AtjonTV/MySQLm soon.
      */
-    class MySQLm # Version 1.4.4:14_11_2017
+    class MySQLm # Version 1.4.5:15_11_2017
     {
         /* Private Variables */
-        private $version = "1.4.4:14_11_2017";
-        private $version_arr = array('major'=>1,'minor'=>4,'patch'=>4);
+        private $version = "1.4.5:15_11_2017";
+        private $version_arr = array('major'=>1,'minor'=>4,'patch'=>5);
         private $connectionOpen = false;
         private $connectionInfo = null;
         private $connection = null;
@@ -193,7 +193,7 @@
                     mysqli_free_result($lresult);
                     return $this->lastResult;
                 }
-                else if ($returnType == "MySQL_Table")
+                else if ($returnType == E_ReturnType::MYSQL_TABLE)
                 {
                     $this->lastResult = $lresult;
                     return $this->lastResult;
@@ -422,7 +422,7 @@
         }
     }
 
-    class SQLite3m # Version 1.0.01:14_11_2017
+    class SQLite3m # Version 1.0.1:14_11_2017
     {
         /* Private Variables */
         private $version = "1.0.1:14_11_2017";
