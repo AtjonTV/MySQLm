@@ -422,11 +422,11 @@
         }
     }
 
-    class SQLite3m # Version 1.0.1:14_11_2017
+    class SQLite3m # Version 1.0.2:16_11_2017
     {
         /* Private Variables */
-        private $version = "1.0.1:14_11_2017";
-        private $version_arr = array('major'=>1,'minor'=>0,'patch'=>1);
+        private $version = "1.0.2:16_11_2017";
+        private $version_arr = array('major'=>1,'minor'=>0,'patch'=>2);
         private $connectionOpen = false;
         private $connection = null;
         private $connectionInfo = null;
@@ -439,6 +439,19 @@
             $connection = new SQLite3($sqlite_3_File);
             $connectionOpen = true;
             $connectionInfo = array("DB_FILE"=>$sqlite_3_File);
+        }
+
+        function executeCreate($query)
+        {
+            $this->checkVars(array($query), "executeCreate($query)");
+            if($this->connectionOpen)
+            {
+                $lresult = $this->connection->query('CREATE '.$query)
+                    or $this->throwError("Error while querying the Database. [executeCreate($query);]", "x");
+                return $lresult;
+            }
+            else
+                $this->throwError("ERROR, the connection seams to be closed. Run connect() or reconnect() to make a connection", "x");
         }
 
         function executeSelect($query, $returnType)
@@ -475,8 +488,34 @@
             $this->checkVars(array($query), "executeInsert($query)");
             if($this->connectionOpen)
             {
-                $lresult = $this->connection->query('INSERT'.$query)
+                $lresult = $this->connection->query('INSERT '.$query)
                     or $this->throwError("Error while querying the Database. [executeInsert($query);]", "x");
+                return $lresult;
+            }
+            else
+                $this->throwError("ERROR, the connection seams to be closed. Run connect() or reconnect() to make a connection", "x");
+        }
+
+        function executeUpdate($query)
+        {
+            $this->checkVars(array($query), "executeUpdate($query)");
+            if($this->connectionOpen)
+            {
+                $lresult = $this->connection->query('UPDATE '.$query)
+                    or $this->throwError("Error while querying the Database. [executeUpdate($query);]", "x");
+                return $lresult;
+            }
+            else
+                $this->throwError("ERROR, the connection seams to be closed. Run connect() or reconnect() to make a connection", "x");
+        }
+
+        function executeDelete($query)
+        {
+            $this->checkVars(array($query), "executeDelete($query)");
+            if($this->connectionOpen)
+            {
+                $lresult = $this->connection->query('UPDATE '.$query)
+                    or $this->throwError("Error while querying the Database. [executeDelete($query);]", "x");
                 return $lresult;
             }
             else
