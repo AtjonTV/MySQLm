@@ -5,9 +5,14 @@
 
     echo "Creating MySQLm Object ..<br>";
     $msql = new MySQLm("","","","","");
-    echo "Created.<br>MySQLm v".$msql->getVersion(true)." in Use<br>Connecting to Server without DB ..<br>";
-    $msql->connect_ndb('localhost', 3306, 'root', '');
-    echo "Connected!<br>Checking Connection..<br>";
+    echo "Created.<br>";
+    echo "Connecting to Server without DB ..<br>";
+    $msql->connect_ndb('localhost', 3306, 'root', '', 'utf8');
+    echo "Connected!<br><br>";
+    echo "MySQLm v".$msql->getVersion(true)." in Use";
+    echo "<br>Client v".$msql->getSqlVersion(false)." | ".$msql->getInformation(false);
+    echo "<br>Server v".$msql->getSqlVersion(true)." | ".$msql->getInformation(true);
+    echo "<br><br>Checking Connection..<br>";
     if($msql->checkConnection())
     {
         echo "Connection OK!<br>Creating Database..<br>";

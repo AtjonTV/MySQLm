@@ -7,11 +7,11 @@
      * 
      *  Documentation of MySQLm can be found on http://Github.com/AtjonTV/MySQLm soon.
      */
-    class MySQLm # Version 1.4.6:27_11_2017
+    class MySQLm # Version 1.4.7:27_11_2017
     {
         /* Private Variables */
-        private $version = "1.4.6:27_11_2017";
-        private $version_arr = array('major'=>1,'minor'=>4,'patch'=>6);
+        private $version = "1.4.7:27_11_2017";
+        private $version_arr = array('major'=>1,'minor'=>4,'patch'=>7);
         private $connectionOpen = false;
         private $connectionInfo = null;
         private $connection = null;
@@ -54,14 +54,18 @@
         }
 
         /* Function to open a connection */
-        function connect($host, $port, $user, $pass, $db) 
+        function connect($host, $port, $user, $pass, $db, $charset) 
         {
-            $this->checkVars(array($host, $port, $user, $pass, $db), "connection($host, $port, $user, $pass, $db)");            
+            $this->checkVars(array($host, $port, $user, $pass, $db, $charset), "connection($host, $port, $user, $pass, $db, $charset)");            
 
             $this->connection = @new mysqli($host, $user, $pass, $db, $port);
             
             if(!$this->checkConnection())
                 $this->throwError("Could not Connect to the Database, Object Disposed.", 'dispose');
+
+            if (!$this->connection->set_charset($charset)) {
+                $this->throwError("An Error Occured while loading charset $charset", "dispose");
+            }
 
             if($this->connection->connect_error)
                 $this->throwError("An Error Occured while opening a connection to the database: ".$this->connection->connect_error, "dispose");
@@ -72,19 +76,24 @@
                 "User" => $user,
                 "Pass" => $pass,
                 "DaBa" => $db,
-                "Port" => $port
+                "Port" => $port,
+                "ChSt" => $charset
             );
         }
 
         /* Function to select a Database */
-        function connect_ndb($host, $port, $user, $pass)
+        function connect_ndb($host, $port, $user, $pass, $charset)
         {
-            $this->checkVars(array($host, $port, $user, $pass), "connection($host, $port, $user, $pass)");            
+            $this->checkVars(array($host, $port, $user, $pass, $charset), "connection($host, $port, $user, $pass, $charset)");            
             
             $this->connection = @new mysqli($host.':'.$port, $user, $pass);
             
             if(!$this->checkConnection())
                 $this->throwError("Could not Connect to the Database, Object Disposed.", 'dispose');
+            
+                if (!$this->connection->set_charset($charset)) {
+                $this->throwError("An Error Occured while loading charset $charset", "dispose");
+            }
 
             if($this->connection->connect_error)
                 $this->throwError("An Error Occured while opening a connection to the database: ".$this->connection->connect_error, "dispose");
@@ -96,7 +105,8 @@
                 "User" => $user,
                 "Pass" => $pass,
                 "DaBa" => "",
-                "Port" => $port
+                "Port" => $port,
+                "ChSt" => $charset
             );
         }
 
@@ -141,6 +151,17 @@
                 $this->queryString;
             else
                 $this->throwError("ERROR, the connection seams to be closed. Run connect() or reconnect() to make a connection", "x");
+        }
+
+        /* Set the Charset on Connection */
+        function setCharset($charset)
+        {
+            if(!$this->checkConnection())
+            $this->throwError("Could not Connect to the Database, Object Disposed.", 'dispose');
+        
+            if (!$this->connection->set_charset($charset)) {
+                $this->throwError("An Error Occured while loading charset $charset", "dispose");
+            }
         }
 
         /* Execute stored query string */
@@ -422,6 +443,12 @@
             return $this->connection->real_escape_string($sql_query);
         }
 
+        /* Escape String and Remove Useless Spaces to get Real SQL Code */
+        function escapeStringTrim($sql_query)
+        {
+            return $this->connection->real_escape_string(trim($sql_query));
+        }
+
         /* Return the version of the MySQL Manager */
         function getVersion($asString)
         {
@@ -429,6 +456,31 @@
                 return $this->version;
             else
                 return $this->version_arr;
+        }
+
+        /* Return Client/Server Information */
+        function getInformation($fromServer)
+        {
+            if(!$fromServer)
+            {
+                return $this->connection->get_client_info();
+            }
+            else
+            {
+                return $this->connection->server_info;
+            }
+        }
+
+        function getSqlVersion($fromServer)
+        {
+            if(!$fromServer)
+            {
+                return $this->connection->client_version;
+            }
+            else
+            {
+                return $this->connection->server_version;
+            }
         }
     }
 
