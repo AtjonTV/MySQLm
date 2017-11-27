@@ -16,6 +16,13 @@ Release Build:
 
 `https://raw.githubusercontent.com/AtjonTV/MySQLm/master/src/MySQLm.php`
 
+# Report Bugs or Wishes
+
+You can Report Bugs or add Wishes on out Bugtracker Site:
+
+| URL                               | Username          | Password      |
+| --------------------------------- |:-----------------:| :------------:|
+| https://atvg-studios.mantishub.io |     guest         | guest         |
 
 # How to use MySQLm?
 See the wiki: https://github.com/AtjonTV/MySQLm/wiki
@@ -29,7 +36,7 @@ Copyright holder is ATVG-Studios, Copyright 2015-2017 ATVG-Studios
 All Contributers are Copyright holder of thair commits, by commiting to this project (Pull Requests), the copyright is splitt between ATVG-Studios and the developer of the commit.
 
 # What is OSPL? Show it to me, so i can ignore it.
-OSPL v1 (Open Source Product License Version 1.1 by ATVG-Studios)
+OSPL v1 (Open Source Project License Version 1.1 by ATVG-Studios)
 
 Copyright (c) 2015-2017 Thomas Obernosterer (ATVG-Studios)
 
