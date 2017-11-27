@@ -7,11 +7,11 @@
      * 
      *  Documentation of MySQLm can be found on http://Github.com/AtjonTV/MySQLm soon.
      */
-    class MySQLm # Version 1.4.5:15_11_2017
+    class MySQLm # Version 1.4.6:27_11_2017
     {
         /* Private Variables */
-        private $version = "1.4.5:15_11_2017";
-        private $version_arr = array('major'=>1,'minor'=>4,'patch'=>5);
+        private $version = "1.4.6:27_11_2017";
+        private $version_arr = array('major'=>1,'minor'=>4,'patch'=>6);
         private $connectionOpen = false;
         private $connectionInfo = null;
         private $connection = null;
@@ -30,6 +30,9 @@
                 $this->checkVars(array($host, $port, $user, $pass, $db, $charset), "__construct($host, $port, $user, $pass, $db, $charset)");
 
                 $this->connection = @new mysqli($host, $user, $pass, $db, $port);
+
+                if(!$this->checkConnection())
+                    $this->throwError("Could not Connect to the Database, Object Disposed.", 'dispose');
                 
                 if (!$this->connection->set_charset($charset)) {
                     $this->throwError("An Error Occured while loading charset $charset", "dispose");
@@ -44,7 +47,8 @@
                     "User" => $user,
                     "Pass" => $pass,
                     "DaBa" => $db,
-                    "Port" => $port
+                    "Port" => $port,
+                    "ChSt" => $charset
                 );
             }
         }
@@ -56,6 +60,9 @@
 
             $this->connection = @new mysqli($host, $user, $pass, $db, $port);
             
+            if(!$this->checkConnection())
+                $this->throwError("Could not Connect to the Database, Object Disposed.", 'dispose');
+
             if($this->connection->connect_error)
                 $this->throwError("An Error Occured while opening a connection to the database: ".$this->connection->connect_error, "dispose");
 
@@ -76,6 +83,9 @@
             
             $this->connection = @new mysqli($host.':'.$port, $user, $pass);
             
+            if(!$this->checkConnection())
+                $this->throwError("Could not Connect to the Database, Object Disposed.", 'dispose');
+
             if($this->connection->connect_error)
                 $this->throwError("An Error Occured while opening a connection to the database: ".$this->connection->connect_error, "dispose");
 
@@ -182,7 +192,7 @@
             {
                 $lresult = $this->connection->query("SELECT ".$query)
                     or $this->throwError("Error while querying the Database. [executeSelect($query, $returnType);] [".$this->connection->error."]", "x");
-                if($returnType == E_ReturnType::TWODIMENSIONAL_ARRAY)
+                if($returnType == E_ReturnType::TWODIMENSIONAL_ARRAY || $returnType == E_ReturnType::TWO_D_ARRAY)
                 {
                     $llresult = array();
                     while($res = mysqli_fetch_array($lresult, MYSQLI_NUM))
@@ -422,11 +432,11 @@
         }
     }
 
-    class SQLite3m # Version 1.0.2:16_11_2017
+    class SQLite3m # Version 1.0.3:27_11_2017
     {
         /* Private Variables */
-        private $version = "1.0.2:16_11_2017";
-        private $version_arr = array('major'=>1,'minor'=>0,'patch'=>2);
+        private $version = "1.0.3:27_11_2017";
+        private $version_arr = array('major'=>1,'minor'=>0,'patch'=>3);
         private $connectionOpen = false;
         private $connection = null;
         private $connectionInfo = null;
@@ -463,7 +473,7 @@
                 $lresult = $this->connection->query("SELECT ".$query)
                     or $this->throwError("Error while querying the Database. [executeSelect($query, $returnType);]", "x");
                 
-                if($returnType == E_ReturnType::TWODIMENSIONAL_ARRAY)
+                if($returnType == E_ReturnType::TWODIMENSIONAL_ARRAY || $returnType == E_ReturnType::TWO_D_ARRAY)
                 {
                     $llresult = array();
                     while($res = $llresult->fatchArray())
@@ -556,5 +566,6 @@
         const MYSQL_TABLE = 1;
         const SQLITE_TABLE = 2;
         const TWODIMENSIONAL_ARRAY = 3;
+        const TWO_D_ARRAY = 3;
     }
 ?>

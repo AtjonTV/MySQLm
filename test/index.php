@@ -5,8 +5,8 @@
 
     echo "Creating MySQLm Object ..<br>";
     $msql = new MySQLm("","","","","");
-    echo "Created.<br>Connecting to Server without DB ..<br>";
-    $msql->connect_ndb('localhost', 3306, 'root', '55#admin683455');
+    echo "Created.<br>MySQLm v".$msql->getVersion(true)." in Use<br>Connecting to Server without DB ..<br>";
+    $msql->connect_ndb('localhost', 3306, 'root', '');
     echo "Connected!<br>Checking Connection..<br>";
     if($msql->checkConnection())
     {
@@ -26,7 +26,7 @@
             echo "Inserted!<br>";
         }
         echo "Loop finished!<br>Selecting Data and getting result ..<br>";
-        $msql->executeSelect("num, hash FROM mysqlm_test.test WHERE num = 34", E_ReturnType::TWODIMENSIONAL_ARRAY);
+        $msql->executeSelect("num, hash FROM mysqlm_test.test WHERE num = 34", E_ReturnType::TWO_D_ARRAY);
         $res = $msql->getResult();
         echo "Selected!<br>Checking Result..<br>";
         if($res != null)
