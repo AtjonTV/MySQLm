@@ -18,7 +18,7 @@ Release Build:
 
 # Report Bugs or Wishes
 
-You can Report Bugs or add Wishes on out Bugtracker Site:
+You can Report Bugs or add Wishes on our Bugtracker Site:
 
 | URL                               | Username          | Password      |
 | --------------------------------- |:-----------------:| :------------:|
