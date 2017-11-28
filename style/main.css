@@ -1,0 +1,39 @@
+.card{
+    border-radius:0px;
+}
+.mini
+{
+    font-size: small;
+}
+.center{
+    text-align:center;
+    width: 50%;
+    margin:0 auto;
+}
+#div-container{
+    padding-top: 100px;
+    padding-bottom: 50px;
+}
+.footer{
+    text-align: center;
+}
+.footer .card{
+    border-radius: 0px;
+}
+.header-t{
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    text-align: center;
+}
+.footer-b{
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    text-align: center;
+}
+.spacer{
+    padding: 20px;
+}
