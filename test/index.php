@@ -1,4 +1,12 @@
 <?php
+    /*
+     *  Copyright 2015-2017 AtjonTV (Thomas Obernosterer)
+     * 
+     *  This is an OSPL Project
+     *      OSPL is an License by ATVG-Studios: http://atvg-studios.at/OSPLv1.1
+     * 
+     *  Documentation of MySQLm can be found on http://Github.com/AtjonTV/MySQLm soon.
+     */
     echo "Including MySQLm ..<br>";
     include '../src/MySQLm.php';
     echo "Included!<br>";
