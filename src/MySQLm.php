@@ -7,11 +7,11 @@
      * 
      *  Documentation of MySQLm can be found on http://Github.com/AtjonTV/MySQLm soon.
      */
-    class MySQLm # Version 1.4.8:30_11_2017
+    class MySQLm # Version 1.4.9:03_12_2017
     {
         /* Private Variables */
-        private $version = "1.4.8:30_11_2017";
-        private $version_arr = array('major'=>1,'minor'=>4,'patch'=>8);
+        private $version = "1.4.9:03_12_2017";
+        private $version_arr = array('major'=>1,'minor'=>4,'patch'=>9);
         private $connectionOpen = false;
         private $connectionInfo = null;
         private $connection = null;
@@ -27,19 +27,25 @@
                 $this->lastInternalError = "at __construct: NO ARGUMENTS GIVEN, CONNECTION LESS OBJECT.";
             }
             else{
-                $this->checkVars(array($host, $port, $user, $pass, $db, $charset), "__construct($host, $port, $user, $pass, $db, $charset)");
+                $this->checkVars(array($host, $port, $user, $pass, $db), "__construct($host, $port, $user, $pass, $db)");
+
+				if(empty($charset)){
+					$this->$charset="utf8";
+				}
 
                 $this->connection = @new mysqli($host, $user, $pass, $db, $port);
 
-                if(!$this->checkConnection())
+                if(!$this->checkConnection()){
                     $this->throwError("Could not Connect to the Database, Object Disposed.", 'dispose');
+                }
                 
                 if (!$this->connection->set_charset($charset)) {
                     $this->throwError("An Error Occured while loading charset $charset", "dispose");
                 }
 
-                if($this->connection->connect_error)
-                    $this->throwError("An Error Occured while opening a connection to the database: ".$this->connection->connect_error, "dispose");
+                if($this->connection->connect_error){
+                	$this->throwError("An Error Occured while opening a connection to the database: ".$this->connection->connect_error, "dispose");
+                }
     
                 $this->connectionOpen = true;
                 $this->connectionInfo = array(
@@ -56,20 +62,26 @@
         /* Function to open a connection */
         function connect($host, $port, $user, $pass, $db, $charset) 
         {
-            $this->checkVars(array($host, $port, $user, $pass, $db, $charset), "connection($host, $port, $user, $pass, $db, $charset)");            
+            $this->checkVars(array($host, $port, $user, $pass, $db), "connect($host, $port, $user, $pass, $db)");            
+
+			if(empty($charset)){
+				$this->$charset="utf8";
+			}
 
             $this->connection = @new mysqli($host, $user, $pass, $db, $port);
             
-            if(!$this->checkConnection())
+            if(!$this->checkConnection()){
                 $this->throwError("Could not Connect to the Database, Object Disposed.", 'dispose');
-
+            }
+            
             if (!$this->connection->set_charset($charset)) {
                 $this->throwError("An Error Occured while loading charset $charset", "dispose");
             }
 
-            if($this->connection->connect_error)
-                $this->throwError("An Error Occured while opening a connection to the database: ".$this->connection->connect_error, "dispose");
-
+            if($this->connection->connect_error){
+            	$this->throwError("An Error Occured while opening a connection to the database: ".$this->connection->connect_error, "dispose");
+            }
+                
             $this->connectionOpen = true;
             $this->connectionInfo = array(
                 "Host" => $host,
@@ -84,7 +96,11 @@
         /* Function to select a Database */
         function connect_ndb($host, $port, $user, $pass, $charset)
         {
-            $this->checkVars(array($host, $port, $user, $pass, $charset), "connection($host, $port, $user, $pass, $charset)");            
+            $this->checkVars(array($host, $port, $user, $pass), "connect_ndb($host, $port, $user, $pass)");            
+            
+            if(empty($charset)){
+				$this->$charset="utf8";
+			}
             
             $this->connection = @new mysqli($host.':'.$port, $user, $pass);
             
@@ -168,12 +184,25 @@
         }
 
         /* Execute stored query string */
-        function executeQuery()
+        function executeSavedQuery()
         {
             if($this->connectionOpen)
             {
                 $lresult = $this->connection->query($this->queryString) 
-                    or $this->throwError("There was an error while querying the database. [executeQuery($this->queryString);] [".$this->connection->error."]", "x");
+                    or $this->throwError("There was an error while querying the database. [executeStoredQuery($this->queryString);] [".$this->connection->error."]", "x");
+                $this->lastResult = $lresult;
+            }
+            else
+                $this->throwError("ERROR, the connection seams to be closed. Run connect() or reconnect() to make a connection", "x");
+        }
+        
+        /* Execute query string */
+        function executeQuery($query)
+        {
+            if($this->connectionOpen)
+            {
+                $lresult = $this->connection->query($query) 
+                    or $this->throwError("There was an error while querying the database. [executeQuery($query);] [".$this->connection->error."]", "x");
                 $this->lastResult = $lresult;
             }
             else
