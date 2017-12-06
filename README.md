@@ -20,9 +20,9 @@ Release Build:
 
 You can Report Bugs or add Wishes on our Bugtracker Site:
 
-| URL                               | Username          | Password      |
-| --------------------------------- |:-----------------:| :------------:|
-| https://atvg-studios.mantishub.io |     guest         | guest         |
+| URL                               |
+| --------------------------------- |
+| http://bugtracker.atvg-studios.at |
 
 # How to use MySQLm?
 See the wiki: https://github.com/AtjonTV/MySQLm/wiki
