@@ -7,11 +7,11 @@
      * 
      *  Documentation of MySQLm can be found on http://Github.com/AtjonTV/MySQLm soon.
      */
-    class MySQLm # Version 1.5.0:10_12_2017
+    class MySQLm # Version 1.5.1:10_12_2017
     {
         /* Private Variables */
-        private $version = "1.5.0:10_12_2017";
-        private $version_arr = array('major'=>1,'minor'=>5,'patch'=>0);
+        private $version = "1.5.1:10_12_2017";
+        private $version_arr = array('major'=>1,'minor'=>5,'patch'=>1);
         private $connectionOpen = false;
         private $connectionInfo = null;
         private $connection = null;
@@ -135,6 +135,7 @@
         /* Function to select database */
         function selectDatabase($db)
         {
+            $db = $this->escapeStringTrim($db);
             $this->checkVars(array($db), "selectDatabase($db)");
             if($this->connectionOpen)
             {
@@ -170,6 +171,7 @@
         /* Set a QueryString to execute later */
         function setQueryString($query)
         {
+            $query = $this->escapeStringTrim($query);
             $this->checkVars(array($query), "setQueryString($query)");
 
             if($this->connectionOpen)
@@ -205,6 +207,7 @@
         /* Execute query string */
         function executeQuery($query)
         {
+            $query = $this->escapeStringTrim($query);
             if($this->connectionOpen)
             {
                 $lresult = $this->connection->query($query) 
@@ -218,6 +221,7 @@
         /* Execute query string */
         function executeCreate($query)
         {
+            $query = $this->escapeStringTrim($query);
             $this->checkVars(array($query), "executeCreate($query)");
             if($this->connectionOpen)
             {
@@ -232,6 +236,7 @@
         /* Execute query string */
         function executeUse($query)
         {
+            $query = $this->escapeStringTrim($query);
             $this->checkVars(array($query), "executeUse($query)");
             if($this->connectionOpen)
             {
@@ -246,6 +251,7 @@
         /* Execute query string */
         function executeSelect($query, $returnType)
         {
+            $query = $this->escapeStringTrim($query);
             $this->checkVars(array($query), "executeSelect($query)");
             if($this->connectionOpen)
             {
@@ -275,6 +281,7 @@
         /* Execute query string */
         function executeInsert($query)
         {
+            $query = $this->escapeStringTrim($query);
             $this->checkVars(array($query), "executeInsert($query)");
             if($this->connectionOpen)
             {
@@ -289,6 +296,7 @@
         /* Execute query string */
         function executeDelete($query)
         {
+            $query = $this->escapeStringTrim($query);
             $this->checkVars(array($query), "executeDelete($query)");
             if($this->connectionOpen)
             {
@@ -303,6 +311,7 @@
         /* Execute query string */
         function executeUpdate($query)
         {
+            $query = $this->escapeStringTrim($query);
             $this->checkVars(array($query), "executeUpdate($query)");
             if($this->connectionOpen)
             {
@@ -317,6 +326,7 @@
         /* Execute query string */
         function executeDrop($query)
         {
+            $query = $this->escapeStringTrim($query);
             $this->checkVars(array($query), "executeDrop($query)");
             if($this->connectionOpen)
             {
