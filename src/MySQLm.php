@@ -7,11 +7,11 @@
      * 
      *  Documentation of MySQLm can be found on http://Github.com/AtjonTV/MySQLm soon.
      */
-    class MySQLm # Version 1.4.9:03_12_2017
+    class MySQLm # Version 1.5.0:10_12_2017
     {
         /* Private Variables */
-        private $version = "1.4.9:03_12_2017";
-        private $version_arr = array('major'=>1,'minor'=>4,'patch'=>9);
+        private $version = "1.5.0:10_12_2017";
+        private $version_arr = array('major'=>1,'minor'=>5,'patch'=>0);
         private $connectionOpen = false;
         private $connectionInfo = null;
         private $connection = null;
@@ -22,6 +22,8 @@
         /* Constructor for the Object to directly open a connection */
         function __construct($host, $port, $user, $pass, $db, $charset) 
         {
+            $this->checkExtensions();
+
             if(empty($host)&&empty($port)&&empty($user)&&empty($pass)&&empty($db)&&empty($charset))
             {
                 $this->lastInternalError = "at __construct: NO ARGUMENTS GIVEN, CONNECTION LESS OBJECT.";
@@ -62,6 +64,8 @@
         /* Function to open a connection */
         function connect($host, $port, $user, $pass, $db, $charset) 
         {
+            $this->checkExtensions();
+
             $this->checkVars(array($host, $port, $user, $pass, $db), "connect($host, $port, $user, $pass, $db)");            
 
 			if(empty($charset)){
@@ -96,6 +100,8 @@
         /* Function to select a Database */
         function connect_ndb($host, $port, $user, $pass, $charset)
         {
+            $this->checkExtensions();
+
             $this->checkVars(array($host, $port, $user, $pass), "connect_ndb($host, $port, $user, $pass)");            
             
             if(empty($charset)){
@@ -479,6 +485,19 @@
         function escapeStringTrim($sql_query)
         {
             return $this->connection->real_escape_string(trim($sql_query));
+        }
+
+        /* Check if extensions are enabled or can be enabled*/
+        function checkExtensions(){
+            
+            #Check if mysqli is enabled
+            if(!extension_loaded('mysqli'))
+            {
+                if(!dl('mysqli'))
+                {
+                    $this->throwError("Extension 'mysqli' not Installed or cloud not be found", 'dispose');
+                }
+            }
         }
 
         /* Return the version of the MySQL Manager */
