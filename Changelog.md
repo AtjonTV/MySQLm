@@ -1,10 +1,21 @@
-# Changelog
+# Changelog 2017
 
 `+` = Added, `-` = Removed, `~` = Changed
 
 ***
 
+## Un-Released (In Development)
+
+***
+
 ## Version 1.5.x
+
+### v1.5.3
+`~` Changed Extension check
+>`+` Added 'Curl'  
+>`+` Added Connection Check  
+>`~` Changed Error Message for MySQLi
+
 
 ### v1.5.2
 `+` Added Input Check for execute Query
@@ -12,10 +23,8 @@
 `+` Added Function to execute a Query multiple times
 
 `~` Versioning
->`+` Added extra Version variable
-
->`+` Added Version Check with link for a new Version
-
+>`+` Added extra Version variable  
+>`+` Added Version Check with link for a new Version  
 >`~` Changed the way how the version Function returns the Version
 
 ### v1.5.1 (Security Patch)
@@ -35,8 +44,7 @@ Made [Bugfix 5](http://bugtracker.atvg-studios.at/view.php?id=5)
 `+` Added Default Charset
 
 `~` Splitted Query Function:
->`+` Added Function for Stored Querys
-
+>`+` Added Function for Stored Querys  
 >`+` Added Function for non Stored Querys
 
 ### v1.4.8
@@ -51,13 +59,11 @@ Made [Bugfix 3](https://atvg-studios.mantishub.io/view.php?id=3)
 >`+` Added Function to Trim and Escape Strings
 
 Made [Bugfix 4](https://atvg-studios.mantishub.io/view.php?id=4)
->`+` Added Function to set Charset
-
+>`+` Added Function to set Charset  
 >`~` Final Charset integration
 
 Made [Bugfix 5](https://atvg-studios.mantishub.io/view.php?id=5) and [Bugfix 6](https://atvg-studios.mantishub.io/view.php?id=6)
->`+` Added Function to get Information about Client and Server
-
+>`+` Added Function to get Information about Client and Server  
 >`+` Added Function to get Version from Client and Server
 
 ### v1.4.6
@@ -80,22 +86,17 @@ Made [Bugfix 5](https://atvg-studios.mantishub.io/view.php?id=5) and [Bugfix 6](
 
 ### v1.4.1
 `~` Execute Select
->`~` Input Check
-
+>`~` Input Check  
 >`~` Return Type Check
 
 `+` Added Return Type Enum Class
 
 ### v1.4.0
 `+` Added Command Begin to query functions
->executeQuery
-
->executeDrop
-
->executeInsert
-
->executeSelect
-
+>executeQuery  
+>executeDrop  
+>executeInsert  
+>executeSelect  
 >executeUpdate
 
 ***
@@ -131,12 +132,9 @@ Release with the new Internal Error System
 `+` Function: executeUse();
 
 `~` Constructor:
->`+` Added saving of Connection data
-
->`+` Added Input check
-
->`+` Added Error Throw on connection fail
-
+>`+` Added saving of Connection data  
+>`+` Added Input check  
+>`+` Added Error Throw on connection fail  
 >`+` Added check for empty input
 
 
@@ -150,31 +148,23 @@ Release with the new Internal Error System
 >`~` Changed Throw error call for no success
 
 `~` Execute Select:
->`+` Added Input check
-
->`+` Added Throw error call for closed connection
-
+>`+` Added Input check  
+>`+` Added Throw error call for closed connection  
 >`~` Changed Throw error call for no success
 
 `~` Execute Insert:
->`+` Added Input check
-
->`+` Added Throw error call for closed connection
-
+>`+` Added Input check  
+>`+` Added Throw error call for closed connection  
 >`~` Changed Throw error call for no success
 
 `~` Execute Delete:
->`+` Added Input check
-
->`+` Added Throw error call for closed connection
-
+>`+` Added Input check  
+>`+` Added Throw error call for closed connection  
 >`~` Changed Throw error call for no success
 
 `~` Execute Drop:
->`+` Added Input check
-
->`+` Added Throw error call for closed connection
-
+>`+` Added Input check  
+>`+` Added Throw error call for closed connection  
 >`~` Changed Throw error call for no success
 
 ### v1.3.4

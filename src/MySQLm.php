@@ -7,12 +7,12 @@
      * 
      *  Documentation of MySQLm can be found on http://Github.com/AtjonTV/MySQLm soon.
      */
-    class MySQLm # Version 1.5.2:10_12_2017
+    class MySQLm # Version 1.5.3:10_12_2017
     {
         /* Private Variables */
-        private $version = "1.5.2"; 
-        private $version_date = "1.5.2:10_12_2017";
-        private $version_arr = array('major'=>1,'minor'=>5,'patch'=>2, 'release'=>21);
+        private $version = "1.5.3"; 
+        private $version_date = "1.5.3:10_12_2017";
+        private $version_arr = array('major'=>1,'minor'=>5,'patch'=>3, 'release'=>22);
         private $connectionOpen = false;
         private $connectionInfo = null;
         private $connection = null;
@@ -522,10 +522,19 @@
             #Check if mysqli is enabled
             if(!extension_loaded('mysqli'))
             {
-                if(!dl('mysqli'))
-                {
-                    $this->throwError("Extension 'mysqli' not Installed or cloud not be found", 'dispose');
-                }
+                if($this->connectionOpen)
+                    $this->throwError("Extension 'mysqli' not Installed. (Please Install 'mysqli')", 'dispose');
+                else
+                $this->throwError("Extension 'mysqli' not Installed. (Please Install 'mysqli')", '');
+            }
+
+            #Check if curl is enabled
+            if(!extension_loaded('curl'))
+            {
+                if($this->connectionOpen)
+                    $this->throwError("Extension 'curl' not Installed. (Please Install 'curl')", 'dispose');
+                else
+                    $this->throwError("Extension 'curl' not Installed. (Please Install 'curl')", '');
             }
         }
 
