@@ -1,15 +1,17 @@
 <?php
     /*
-     *  Copyright 2015-2017 AtjonTV (Thomas Obernosterer)
+     *  Copyright 2015-2018 AtjonTV (Thomas Obernosterer)
      * 
      *  This is an OSPL Project
      *      OSPL is an License by ATVG-Studios: http://atvg-studios.at/OSPLv1.1
      * 
      *  Documentation of MySQLm can be found on http://Github.com/AtjonTV/MySQLm soon.
      */
-    class MySQLm # Version 1.4.0:03_11_2017
+    class MySQLm # Version 1.5.0:10_12_2017
     {
         /* Private Variables */
+        private $version = "1.5.0:10_12_2017";
+        private $version_arr = array('major'=>1,'minor'=>5,'patch'=>0);
         private $connectionOpen = false;
         private $connectionInfo = null;
         private $connection = null;
@@ -18,19 +20,34 @@
         private $lastInternalError = null;
 
         /* Constructor for the Object to directly open a connection */
-        function __construct($host, $port, $user, $pass, $db) 
+        function __construct($host, $port, $user, $pass, $db, $charset) 
         {
-            if(empty($host)&&empty($port)&&empty($user)&&empty($pass)&&empty($db))
+            $this->checkExtensions();
+
+            if(empty($host)&&empty($port)&&empty($user)&&empty($pass)&&empty($db)&&empty($charset))
             {
                 $this->lastInternalError = "at __construct: NO ARGUMENTS GIVEN, CONNECTION LESS OBJECT.";
             }
             else{
                 $this->checkVars(array($host, $port, $user, $pass, $db), "__construct($host, $port, $user, $pass, $db)");
 
+				if(empty($charset)){
+					$this->$charset="utf8";
+				}
+
                 $this->connection = @new mysqli($host, $user, $pass, $db, $port);
+
+                if(!$this->checkConnection()){
+                    $this->throwError("Could not Connect to the Database, Object Disposed.", 'dispose');
+                }
                 
-                if($this->connection->connect_error)
-                    $this->throwError("An Error Occured while opening a connection to the database: ".$this->connection->connect_error, "dispose");
+                if (!$this->connection->set_charset($charset)) {
+                    $this->throwError("An Error Occured while loading charset $charset", "dispose");
+                }
+
+                if($this->connection->connect_error){
+                	$this->throwError("An Error Occured while opening a connection to the database: ".$this->connection->connect_error, "dispose");
+                }
     
                 $this->connectionOpen = true;
                 $this->connectionInfo = array(
@@ -38,38 +55,68 @@
                     "User" => $user,
                     "Pass" => $pass,
                     "DaBa" => $db,
-                    "Port" => $port
+                    "Port" => $port,
+                    "ChSt" => $charset
                 );
             }
         }
 
         /* Function to open a connection */
-        function connect($host, $port, $user, $pass, $db) 
+        function connect($host, $port, $user, $pass, $db, $charset) 
         {
-            $this->checkVars(array($host, $port, $user, $pass, $db), "connection($host, $port, $user, $pass, $db)");            
+            $this->checkExtensions();
+
+            $this->checkVars(array($host, $port, $user, $pass, $db), "connect($host, $port, $user, $pass, $db)");            
+
+			if(empty($charset)){
+				$this->$charset="utf8";
+			}
 
             $this->connection = @new mysqli($host, $user, $pass, $db, $port);
             
-            if($this->connection->connect_error)
-                $this->throwError("An Error Occured while opening a connection to the database: ".$this->connection->connect_error, "dispose");
+            if(!$this->checkConnection()){
+                $this->throwError("Could not Connect to the Database, Object Disposed.", 'dispose');
+            }
+            
+            if (!$this->connection->set_charset($charset)) {
+                $this->throwError("An Error Occured while loading charset $charset", "dispose");
+            }
 
+            if($this->connection->connect_error){
+            	$this->throwError("An Error Occured while opening a connection to the database: ".$this->connection->connect_error, "dispose");
+            }
+                
             $this->connectionOpen = true;
             $this->connectionInfo = array(
                 "Host" => $host,
                 "User" => $user,
                 "Pass" => $pass,
                 "DaBa" => $db,
-                "Port" => $port
+                "Port" => $port,
+                "ChSt" => $charset
             );
         }
 
         /* Function to select a Database */
-        function connect_ndb($host, $port, $user, $pass)
+        function connect_ndb($host, $port, $user, $pass, $charset)
         {
-            $this->checkVars(array($host, $port, $user, $pass), "connection($host, $port, $user, $pass)");            
+            $this->checkExtensions();
+
+            $this->checkVars(array($host, $port, $user, $pass), "connect_ndb($host, $port, $user, $pass)");            
+            
+            if(empty($charset)){
+				$this->$charset="utf8";
+			}
             
             $this->connection = @new mysqli($host.':'.$port, $user, $pass);
             
+            if(!$this->checkConnection())
+                $this->throwError("Could not Connect to the Database, Object Disposed.", 'dispose');
+            
+                if (!$this->connection->set_charset($charset)) {
+                $this->throwError("An Error Occured while loading charset $charset", "dispose");
+            }
+
             if($this->connection->connect_error)
                 $this->throwError("An Error Occured while opening a connection to the database: ".$this->connection->connect_error, "dispose");
 
@@ -80,7 +127,8 @@
                 "User" => $user,
                 "Pass" => $pass,
                 "DaBa" => "",
-                "Port" => $port
+                "Port" => $port,
+                "ChSt" => $charset
             );
         }
 
@@ -102,15 +150,18 @@
         /* Function to close a connection */
         function closeConnection()
         {
-            $this->connection->close();
-            $this->connectionOpen = false;
+            if(checkConnection())
+            {
+                $this->connection->close();
+                $this->connectionOpen = false;
+            }
         }
 
         /* Recreates the connection with the last given connection string */
         function reconnect()
         {
             $this->dispose("without", "connectionInfo");
-            $this->connection = @new mysqli($this->connectionInfo["Host"], $this->connectionInfo["User"], $this->connectionInfo["Pass"], $this->connectionInfo["DaBa"], $this->connectionInfo["Port"]);
+            $this->connection = @new mysqli($this->connectionInfo["Host"], $this->connectionInfo["Port"], $this->connectionInfo["User"], $this->connectionInfo["Pass"], $this->connectionInfo["DaBa"], $this->connectionInfo["ChSt"]);
             if($this->connection->connect_error)
                 $this->throwError("An Error Occured while opening a connection to the database: ".$this->connection->connect_error, "dispose");
             $this->connectionOpen = true;
@@ -127,13 +178,37 @@
                 $this->throwError("ERROR, the connection seams to be closed. Run connect() or reconnect() to make a connection", "x");
         }
 
+        /* Set the Charset on Connection */
+        function setCharset($charset)
+        {
+            if(!$this->checkConnection())
+            $this->throwError("Could not Connect to the Database, Object Disposed.", 'dispose');
+        
+            if (!$this->connection->set_charset($charset)) {
+                $this->throwError("An Error Occured while loading charset $charset", "dispose");
+            }
+        }
+
         /* Execute stored query string */
-        function executeQuery()
+        function executeSavedQuery()
         {
             if($this->connectionOpen)
             {
                 $lresult = $this->connection->query($this->queryString) 
-                    or $this->throwError("There was an error while querying the database. [executeQuery($this->queryString);] [".$this->connection->error."]", "x");
+                    or $this->throwError("There was an error while querying the database. [executeStoredQuery($this->queryString);] [".$this->connection->error."]", "x");
+                $this->lastResult = $lresult;
+            }
+            else
+                $this->throwError("ERROR, the connection seams to be closed. Run connect() or reconnect() to make a connection", "x");
+        }
+        
+        /* Execute query string */
+        function executeQuery($query)
+        {
+            if($this->connectionOpen)
+            {
+                $lresult = $this->connection->query($query) 
+                    or $this->throwError("There was an error while querying the database. [executeQuery($query);] [".$this->connection->error."]", "x");
                 $this->lastResult = $lresult;
             }
             else
@@ -171,12 +246,12 @@
         /* Execute query string */
         function executeSelect($query, $returnType)
         {
-            $this->checkVars(array($query, $returnType), "executeSelect($query, $returnType)");
+            $this->checkVars(array($query), "executeSelect($query)");
             if($this->connectionOpen)
             {
                 $lresult = $this->connection->query("SELECT ".$query)
                     or $this->throwError("Error while querying the Database. [executeSelect($query, $returnType);] [".$this->connection->error."]", "x");
-                if($returnType == "2D_Array")
+                if($returnType == E_ReturnType::TWODIMENSIONAL_ARRAY || $returnType == E_ReturnType::TWO_D_ARRAY)
                 {
                     $llresult = array();
                     while($res = mysqli_fetch_array($lresult, MYSQLI_NUM))
@@ -187,7 +262,7 @@
                     mysqli_free_result($lresult);
                     return $this->lastResult;
                 }
-                else if ($returnType == "MySQL_Table")
+                else if ($returnType == E_ReturnType::MYSQL_TABLE)
                 {
                     $this->lastResult = $lresult;
                     return $this->lastResult;
@@ -399,5 +474,72 @@
             if(!$ok)
                 $this->throwError("One or more variables in '$loc' are null or empty", "x");
         }
+
+        /* Escape String to get Real SQL Code */
+        function escapeString($sql_query)
+        {
+            return $this->connection->real_escape_string($sql_query);
+        }
+
+        /* Escape String and Remove Useless Spaces to get Real SQL Code */
+        function escapeStringTrim($sql_query)
+        {
+            return $this->connection->real_escape_string(trim($sql_query));
+        }
+
+        /* Check if extensions are enabled or can be enabled*/
+        function checkExtensions(){
+            
+            #Check if mysqli is enabled
+            if(!extension_loaded('mysqli'))
+            {
+                if(!dl('mysqli'))
+                {
+                    $this->throwError("Extension 'mysqli' not Installed or cloud not be found", 'dispose');
+                }
+            }
+        }
+
+        /* Return the version of the MySQL Manager */
+        function getVersion($asString)
+        {
+            if($asString)
+                return $this->version;
+            else
+                return $this->version_arr;
+        }
+
+        /* Return Client/Server Information */
+        function getInformation($fromServer)
+        {
+            if(!$fromServer)
+            {
+                return $this->connection->get_client_info();
+            }
+            else
+            {
+                return $this->connection->server_info;
+            }
+        }
+
+        function getSqlVersion($fromServer)
+        {
+            if(!$fromServer)
+            {
+                return $this->connection->client_version;
+            }
+            else
+            {
+                return $this->connection->server_version;
+            }
+        }
+    }
+
+    abstract class E_ReturnType
+    {
+        const MYSQL_TABLE = 1;
+        const SQLITE_TABLE = 2;
+        const TWODIMENSIONAL_ARRAY = 3;
+        const TWO_D_ARRAY = 3;
     }
 ?>
