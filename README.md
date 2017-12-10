@@ -20,6 +20,10 @@ Bare Build:
 
 `https://raw.githubusercontent.com/AtjonTV/MySQLm/dev/MySQLm.php`
 
+Full Changelog:
+
+`https://gist.github.com/AtjonTV/6040e71b114a52189405084ad0832bc0`
+
 # Report Bugs or Wishes
 
 You can Report Bugs or add Wishes on our Bugtracker Site:
