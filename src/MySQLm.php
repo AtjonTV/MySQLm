@@ -7,11 +7,12 @@
      * 
      *  Documentation of MySQLm can be found on http://Github.com/AtjonTV/MySQLm soon.
      */
-    class MySQLm # Version 1.5.1:10_12_2017
+    class MySQLm # Version 1.5.2:10_12_2017
     {
         /* Private Variables */
-        private $version = "1.5.1:10_12_2017";
-        private $version_arr = array('major'=>1,'minor'=>5,'patch'=>1);
+        private $version = "1.5.2"; 
+        private $version_date = "1.5.2:10_12_2017";
+        private $version_arr = array('major'=>1,'minor'=>5,'patch'=>2, 'release'=>21);
         private $connectionOpen = false;
         private $connectionInfo = null;
         private $connection = null;
@@ -151,7 +152,7 @@
         /* Function to close a connection */
         function closeConnection()
         {
-            if(checkConnection())
+            if($this->checkConnection())
             {
                 $this->connection->close();
                 $this->connectionOpen = false;
@@ -208,6 +209,7 @@
         function executeQuery($query)
         {
             $query = $this->escapeStringTrim($query);
+            $this->checkVars(array($query), "executeQuery($query)");
             if($this->connectionOpen)
             {
                 $lresult = $this->connection->query($query) 
@@ -216,6 +218,23 @@
             }
             else
                 $this->throwError("ERROR, the connection seams to be closed. Run connect() or reconnect() to make a connection", "x");
+        }
+
+        /* Execute query x times */
+        function executeQueryMultiTimes($query, $times)
+        {
+            $this->checkVars(array($query), "executeQueryMultiTimes($query)");
+            $query = $this->escapeStringTrim($query);
+            if(!$this->connectionOpen)
+                $this->throwError("ERROR, the connection seams to be closed. Run connect() or reconnect() to make a connection", "x");
+
+            $lresult = array();
+            for($i = 0; $i < $times; $i++)
+            {
+                $lresult[$i] = $this->connection->query($query)
+                or $this->throwError("There was an error while querying the database. [executeQueryMultiTimes($query, $times);] [".$this->connection->error."]", "x");
+            }
+            $this->lastResult = $lresult;
         }
 
         /* Execute query string */
@@ -511,12 +530,38 @@
         }
 
         /* Return the version of the MySQL Manager */
-        function getVersion($asString)
+        function getVersion($asString, $stringWithDate)
         {
             if($asString)
-                return $this->version;
+            {
+                if($stringWithDate)
+                    return $this->version_date;
+                else
+                    return $this->version;
+            }
             else
                 return $this->version_arr;
+        }
+
+        function checkForUpdate()
+        {
+            $c = curl_init();
+            curl_setopt($c, CURLOPT_URL, "https://api.github.com/repos/atjontv/mysqlm/releases/latest");
+            curl_setopt($c, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($c,CURLOPT_USERAGENT,'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.13) Gecko/20080311 Firefox/2.0.0.13');
+            curl_setopt($c, CURLOPT_SSL_VERIFYHOST, 0);
+            curl_setopt($c, CURLOPT_SSL_VERIFYPEER, 0);
+            $res = curl_exec($c);
+            curl_close($c);
+            $arr = json_decode($res, true);
+            $link = $arr['html_url'];
+            $ver = $arr['tag_name'];
+            $ver = str_replace('v', '', $ver);
+            
+            if(version_compare($ver, $this->version, '>'))
+                return "There is a new Version! <a href='$link'>Get it Here</a>";
+            else
+                return "There is no new Version, your up to date!";
         }
 
         /* Return Client/Server Information */

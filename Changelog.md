@@ -6,8 +6,21 @@
 
 ## Version 1.5.x
 
+### v1.5.2
+`+` Added Input Check for execute Query
+
+`+` Added Function to execute a Query multiple times
+
+`~` Versioning
+>`+` Added extra Version variable
+
+>`+` Added Version Check with link for a new Version
+
+>`~` Changed the way how the version Function returns the Version
+
 ### v1.5.1 (Security Patch)
-`+` Added Escape String Trim Function call to all Query Functions to prevent SQL Injection by default
+Made [Bugfix 5](http://bugtracker.atvg-studios.at/view.php?id=5)
+>`+` Added Escape String Trim Function call to all Query Functions to prevent SQL Injection by default
 
 ### v1.5.0
 `+` Added Extension Check Fucntion
@@ -27,20 +40,22 @@
 >`+` Added Function for non Stored Querys
 
 ### v1.4.8
-`~` Added/Changed Charset integration for Charset in Reconnect | [Bugfix 7](https://atvg-studios.mantishub.io/view.php?id=7)
+Made [Bugfix 7](https://atvg-studios.mantishub.io/view.php?id=7)
+>`~` Added/Changed Charset integration for Charset in Reconnect
 
-`+` Added Connection check in close Connection | [Bugfix 8](https://atvg-studios.mantishub.io/view.php?id=8)
+Made [Bugfix 8](https://atvg-studios.mantishub.io/view.php?id=8)
+>`+` Added Connection check in close Connection
 
 ### v1.4.7
-Fixed [Bugfix 4](https://atvg-studios.mantishub.io/view.php?id=4)
+Made [Bugfix 3](https://atvg-studios.mantishub.io/view.php?id=3)
+>`+` Added Function to Trim and Escape Strings
+
+Made [Bugfix 4](https://atvg-studios.mantishub.io/view.php?id=4)
 >`+` Added Function to set Charset
 
 >`~` Final Charset integration
 
-Fixed [Bugfix 3](https://atvg-studios.mantishub.io/view.php?id=3)
->`+` Added Function to Trim and Escape Strings
-
-Fixed [Bugfix 6](https://atvg-studios.mantishub.io/view.php?id=6)
+Made [Bugfix 5](https://atvg-studios.mantishub.io/view.php?id=5) and [Bugfix 6](https://atvg-studios.mantishub.io/view.php?id=6)
 >`+` Added Function to get Information about Client and Server
 
 >`+` Added Function to get Version from Client and Server
