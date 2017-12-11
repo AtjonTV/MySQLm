@@ -19,6 +19,7 @@ Release Build:
 
 # Report Bugs or Wishes  
 You can Report Bugs or add Wishes on our Bugtracker Site:  
+
 | URL                               |
 | --------------------------------- |
 | http://bugtracker.atvg-studios.at |
