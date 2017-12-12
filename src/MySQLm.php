@@ -1,36 +1,37 @@
 <?php
     /*
-     *  Copyright 2015-2017 AtjonTV (Thomas Obernosterer)
+     *  Copyright 2015-2018 AtjonTV (Thomas Obernosterer)
      * 
      *  This is an OSPL Project
-     *      OSPL is an License by ATVG-Studios: http://atvg-studios.at/OSPLv1.1
+     *      OSPL is an License by ATVG-Studios: http://open-source-project-license.atvg-studios.at/
      * 
-     *  Documentation of MySQLm can be found on http://Github.com/AtjonTV/MySQLm soon.
+     *  Documentation of MySQLm can be found on http://Github.com/AtjonTV/MySQLm/wiki .
      */
-    class MySQLm # Version 1.5.3:10_12_2017
+    class MySQLm # Version 1.5.4:12_12_2017
     {
         /* Private Variables */
-        private $version = "1.5.3"; 
-        private $version_date = "1.5.3:10_12_2017";
-        private $version_arr = array('major'=>1,'minor'=>5,'patch'=>3, 'release'=>22);
+        private $version = "1.5.4"; 
+        private $version_date = "1.5.4:12_12_2017";
+        private $version_arr = array('major'=>1,'minor'=>5,'patch'=>4, 'release'=>23);
         private $connectionOpen = false;
         private $connectionInfo = null;
         private $connection = null;
         private $queryString = null;
         private $lastResult = null;
         private $lastInternalError = null;
+        private $updateData = false;
 
         /* Constructor for the Object to directly open a connection */
         function __construct($host, $port, $user, $pass, $db, $charset) 
         {
             $this->checkExtensions();
 
-            if(empty($host)&&empty($port)&&empty($user)&&empty($pass)&&empty($db)&&empty($charset))
+            if(empty($host)&&empty($port)&&empty($user)&&empty($db)&&empty($charset))
             {
                 $this->lastInternalError = "at __construct: NO ARGUMENTS GIVEN, CONNECTION LESS OBJECT.";
             }
             else{
-                $this->checkVars(array($host, $port, $user, $pass, $db), "__construct($host, $port, $user, $pass, $db)");
+                $this->checkVars(array($host, $port, $user, $db), "__construct($host, $port, $user, $pass, $db)");
 
 				if(empty($charset)){
 					$this->$charset="utf8";
@@ -67,7 +68,7 @@
         {
             $this->checkExtensions();
 
-            $this->checkVars(array($host, $port, $user, $pass, $db), "connect($host, $port, $user, $pass, $db)");            
+            $this->checkVars(array($host, $port, $user, $db), "connect($host, $port, $user, $pass, $db)");            
 
 			if(empty($charset)){
 				$this->$charset="utf8";
@@ -103,7 +104,7 @@
         {
             $this->checkExtensions();
 
-            $this->checkVars(array($host, $port, $user, $pass), "connect_ndb($host, $port, $user, $pass)");            
+            $this->checkVars(array($host, $port, $user), "connect_ndb($host, $port, $user, $pass)");            
             
             if(empty($charset)){
 				$this->$charset="utf8";
@@ -536,6 +537,15 @@
                 else
                     $this->throwError("Extension 'curl' not Installed. (Please Install 'curl')", '');
             }
+
+            #Check if zip is enabled
+            if(!extension_loaded('zip'))
+            {
+                if($this->connectionOpen)
+                    $this->throwError("Extension 'zip' not Installed. (Please Install 'zip')", 'dispose');
+                else
+                    $this->throwError("Extension 'zip' not Installed. (Please Install 'zip')", '');
+            }
         }
 
         /* Return the version of the MySQL Manager */
@@ -552,26 +562,88 @@
                 return $this->version_arr;
         }
 
+        /* <UPDATE> */
         function checkForUpdate()
         {
+            if($this->isUpdate()) 
+                return "There is a new Version! <a href='".$this->updateData['html_url']."'>Get it Here</a>";
+            else
+                return "There is no new Version, your up to date!";
+        }
+
+        function autoUpdate()
+        {
+            $this->closeConnection();
+
+            if($this->isUpdate())
+                $this->doUpdate();
+        }
+
+        function isUpdate()
+        {
+            $res = $this->curlGET("https://api.github.com/repos/atjontv/mysqlm/releases/latest");
+            $arr = json_decode($res, true);
+            $ver = $arr['tag_name'];
+            $ver = str_replace('v', '', $ver);
+            $updateData = $arr;
+            
+            if(version_compare($ver, $this->version, '>'))
+                return true;
+            else
+                return false;
+        }
+
+        function doUpdate()
+        {
+            if($this->updateData == null)
+                $this->updateData = json_decode($this->curlGET("https://api.github.com/repos/atjontv/mysqlm/releases/latest"), true);
+            
+            $update = file_get_contents($this->updateData['assets'][0]['browser_download_url']);
+            file_put_contents(__FILE__, $update);
+        }
+
+        /*
+
+        WRITTEN BUT UNUSED:
+
+            $zip = new ZipArchive();
+            $res = $zip->open('UPDATE.zip');
+            if ($res === TRUE) {
+                $zip->extractTo('UPDATE');
+                $zip->close();
+            } else {
+                $this->throwError("Error while unziping the update!", '');
+            }
+
+        */
+
+        private function curlGET($url)
+        {
             $c = curl_init();
-            curl_setopt($c, CURLOPT_URL, "https://api.github.com/repos/atjontv/mysqlm/releases/latest");
+            curl_setopt($c, CURLOPT_URL, $url);
             curl_setopt($c, CURLOPT_RETURNTRANSFER, true);
-            curl_setopt($c,CURLOPT_USERAGENT,'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.13) Gecko/20080311 Firefox/2.0.0.13');
+            curl_setopt($c, CURLOPT_USERAGENT,'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.13) Gecko/20080311 Firefox/2.0.0.13');
             curl_setopt($c, CURLOPT_SSL_VERIFYHOST, 0);
             curl_setopt($c, CURLOPT_SSL_VERIFYPEER, 0);
             $res = curl_exec($c);
             curl_close($c);
-            $arr = json_decode($res, true);
-            $link = $arr['html_url'];
-            $ver = $arr['tag_name'];
-            $ver = str_replace('v', '', $ver);
-            
-            if(version_compare($ver, $this->version, '>'))
-                return "There is a new Version! <a href='$link'>Get it Here</a>";
-            else
-                return "There is no new Version, your up to date!";
+            return $res;
         }
+
+        private function curlGET_FILE($url, $file)
+        {
+            set_time_limit(0);
+            $fp = fopen ($file, 'w+');
+            $ch = curl_init($url);
+            curl_setopt($ch, CURLOPT_TIMEOUT, 50);
+            curl_setopt($ch, CURLOPT_USERAGENT,'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.13) Gecko/20080311 Firefox/2.0.0.13');
+            curl_setopt($ch, CURLOPT_FILE, $fp); 
+            curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+            curl_exec($ch); 
+            curl_close($ch);
+            fclose($fp);
+        }
+        /* </UPDATE> */
 
         /* Return Client/Server Information */
         function getInformation($fromServer)

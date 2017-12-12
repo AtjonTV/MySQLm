@@ -1,11 +1,10 @@
 <?php
     /*
-     *  Copyright 2015-2017 AtjonTV (Thomas Obernosterer)
+     *  Copyright 2015-2018 AtjonTV (Thomas Obernosterer)
      * 
      *  This is an OSPL Project
-     *      OSPL is an License by ATVG-Studios: http://atvg-studios.at/OSPLv1.1
+     *      OSPL is an License by ATVG-Studios: http://open-source-project-license.atvg-studios.at/
      * 
-     *  Documentation of MySQLm can be found on http://Github.com/AtjonTV/MySQLm soon.
      */
     class SQLite3m # Version 1.0.3:27_11_2017
     {

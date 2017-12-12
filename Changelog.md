@@ -1,4 +1,4 @@
-# Changelog 2017
+# Changelog
 
 `+` = Added, `-` = Removed, `~` = Changed
 
@@ -10,7 +10,25 @@
 
 ## Version 1.5.x
 
-### v1.5.3
+### v1.5.4
+[12.12.2017]  
+`~` Changed CheckForUpdate Function  
+`+` Added New Update System
+>`+` Added Auto Update Function  
+>`+` Added Update Available Test Function  
+>`+` Added Make Update Function  
+>`+` Added Internal Function for cURL Github API Requests
+
+Made [Bugfix 6](http://bugtracker.atvg-studios.at/view.php?id=6)
+>`-` Removed Password Empty Check from every Connection Function
+
+`+` Added 'php-zip' to extension check
+
+[Moved Query Test]  
+[Created Updating Test]
+
+### v1.5.3 
+[10.12.2017]  
 `~` Changed Extension check
 >`+` Added 'Curl'  
 >`+` Added Connection Check  
@@ -18,6 +36,7 @@
 
 
 ### v1.5.2
+[10.12.2017]  
 `+` Added Input Check for execute Query
 
 `+` Added Function to execute a Query multiple times
@@ -28,10 +47,12 @@
 >`~` Changed the way how the version Function returns the Version
 
 ### v1.5.1 (Security Patch)
+[10.12.2017]  
 Made [Bugfix 5](http://bugtracker.atvg-studios.at/view.php?id=5)
 >`+` Added Escape String Trim Function call to all Query Functions to prevent SQL Injection by default
 
 ### v1.5.0
+[10.12.2017]  
 `+` Added Extension Check Fucntion
 
 `~` Changed all Connection Functions to use the Extension Check
@@ -41,6 +62,7 @@ Made [Bugfix 5](http://bugtracker.atvg-studios.at/view.php?id=5)
 ## Version 1.4.x
 
 ### v1.4.9
+[03.12.2017]  
 `+` Added Default Charset
 
 `~` Splitted Query Function:
@@ -48,6 +70,7 @@ Made [Bugfix 5](http://bugtracker.atvg-studios.at/view.php?id=5)
 >`+` Added Function for non Stored Querys
 
 ### v1.4.8
+[30.11.2017]  
 Made [Bugfix 7](https://atvg-studios.mantishub.io/view.php?id=7)
 >`~` Added/Changed Charset integration for Charset in Reconnect
 
@@ -55,6 +78,7 @@ Made [Bugfix 8](https://atvg-studios.mantishub.io/view.php?id=8)
 >`+` Added Connection check in close Connection
 
 ### v1.4.7
+[27.11.2017]  
 Made [Bugfix 3](https://atvg-studios.mantishub.io/view.php?id=3)
 >`+` Added Function to Trim and Escape Strings
 
@@ -67,14 +91,17 @@ Made [Bugfix 5](https://atvg-studios.mantishub.io/view.php?id=5) and [Bugfix 6](
 >`+` Added Function to get Version from Client and Server
 
 ### v1.4.6
+[27.11.2017]  
 `+` Added Connection Checks
 
 `~` Added/Chaged Charset integration in __construct
 
 ### v1.4.5
+[15.11.2017]  
 `~` Changed the second return type check
 
 ### v1.4.4
+[14.11.2017]  
 `+` Added Versioning in the Code
 
 `+` Added Charset selection
@@ -82,9 +109,11 @@ Made [Bugfix 5](https://atvg-studios.mantishub.io/view.php?id=5) and [Bugfix 6](
 #### v1.4.3 (Not Existend)
 
 ### v1.4.2
+[10.11.2017]  
 `+` Added Function for Escaping Strings to top SQL Injections
 
 ### v1.4.1
+[09.11.2017]  
 `~` Execute Select
 >`~` Input Check  
 >`~` Return Type Check
@@ -92,6 +121,7 @@ Made [Bugfix 5](https://atvg-studios.mantishub.io/view.php?id=5) and [Bugfix 6](
 `+` Added Return Type Enum Class
 
 ### v1.4.0
+[03.11.2017]  
 `+` Added Command Begin to query functions
 >executeQuery  
 >executeDrop  
@@ -106,9 +136,11 @@ Made [Bugfix 5](https://atvg-studios.mantishub.io/view.php?id=5) and [Bugfix 6](
 #### v1.3.9 (Not Existend)
 
 ### v1.3.8
+[27.10.2017]  
 Release with the new Internal Error System
 
 ### v1.3.7
+[25.10.2017]  
 `-` Removed Internal Error from Value Check
 
 `+` Added Internal Error to connect ndb
@@ -116,6 +148,7 @@ Release with the new Internal Error System
 `+` Added Internal Error to execute drop
 
 ### v1.3.6
+[25.10.2017]  
 `+` Added Function getLastInternalError
 
 `+` Added Variable lastInternalError
@@ -123,6 +156,7 @@ Release with the new Internal Error System
 `~` Changed many Functions to use lastInternalError
 
 ### v1.3.5
+[24.10.2017]  
 `+` Function: connect_ndb();
 
 `+` Function: selectDatabase();
@@ -168,19 +202,23 @@ Release with the new Internal Error System
 >`~` Changed Throw error call for no success
 
 ### v1.3.4
+[24.10.2017]  
 `~` Changed Version notation
 
 Some Test were made with this version.
 
 ### v1.3.3
+[24.10.2017]  
 `~` Fixed wrong function call
 
 ### v1.3.2
+[24.10.2017]  
 `+` Value Check Function
 
 `~` Added Value Check Function call to all Functions
 
 ### v1.3.1
+[24.10.2017]  
 `+` Check to only execute querrys on open connections
 
 `+` Added Error Throws when connection is closed
@@ -192,4 +230,5 @@ Some Test were made with this version.
 ## Version 1.2.0
 
 ### v1.2.0
+[23.10.2017]  
 MySQLm is now going Public 😃
