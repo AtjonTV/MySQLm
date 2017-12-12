@@ -7,12 +7,12 @@
      * 
      *  Documentation of MySQLm can be found on http://Github.com/AtjonTV/MySQLm/wiki .
      */
-    class MySQLm # Version 1.5.4:12_12_2017
+    class MySQLm # Version 1.5.5:12_12_2017
     {
         /* Private Variables */
-        private $version = "1.5.4"; 
-        private $version_date = "1.5.4:12_12_2017";
-        private $version_arr = array('major'=>1,'minor'=>5,'patch'=>4, 'release'=>23);
+        private $version = "1.5.5"; 
+        private $version_date = "1.5.5:12_12_2017";
+        private $version_arr = array('major'=>1,'minor'=>5,'patch'=>5, 'release'=>23);
         private $connectionOpen = false;
         private $connectionInfo = null;
         private $connection = null;
@@ -573,7 +573,8 @@
 
         function autoUpdate()
         {
-            $this->closeConnection();
+            if($this->connectionOpen)
+                $this->closeConnection();
 
             if($this->isUpdate())
                 $this->doUpdate();
@@ -625,6 +626,11 @@
             curl_setopt($c, CURLOPT_USERAGENT,'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.13) Gecko/20080311 Firefox/2.0.0.13');
             curl_setopt($c, CURLOPT_SSL_VERIFYHOST, 0);
             curl_setopt($c, CURLOPT_SSL_VERIFYPEER, 0);
+            $headers = array(
+                'Content-Type:application/json',
+                'Authorization: token 900ac7d7a50213908a74b064f7433dd8c6499da6'
+            );
+            curl_setopt($c, CURLOPT_HTTPHEADER, $headers);
             $res = curl_exec($c);
             curl_close($c);
             return $res;
@@ -639,6 +645,11 @@
             curl_setopt($ch, CURLOPT_USERAGENT,'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.13) Gecko/20080311 Firefox/2.0.0.13');
             curl_setopt($ch, CURLOPT_FILE, $fp); 
             curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+            $headers = array(
+                'Content-Type:application/json',
+                'Authorization: token 900ac7d7a50213908a74b064f7433dd8c6499da6'
+            );
+            curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
             curl_exec($ch); 
             curl_close($ch);
             fclose($fp);

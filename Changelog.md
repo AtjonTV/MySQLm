@@ -10,6 +10,12 @@
 
 ## Version 1.5.x
 
+### v1.5.5
+[12.12.2017]  
+`+` Added API Auth for more than 60 Requests from one pc (Usefull if the Update check is called on multiple sites)
+
+[The Key only gives access to public user info, public repo info and public gists (Same rights as on the Github site without beeing logged in)]
+
 ### v1.5.4
 [12.12.2017]  
 `~` Changed CheckForUpdate Function  
