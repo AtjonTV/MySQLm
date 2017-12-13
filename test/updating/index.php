@@ -13,11 +13,11 @@
 
     echo "Creating MySQLm Object ..<br>";
     $msql = new MySQLm("","","","","","");
-    echo "Created.<br>";
-    echo "MySQLm v".$msql->getVersion(true, true);
-    echo "<br><br>Checking Version..<br>";
+    echo "Created!<br><br>";
+    echo "Your Version: MySQLm v".$msql->getVersion(true, true);
+    echo "<br><br>Checking for Updates ..<br><br>";
     echo $msql->checkForUpdate();
-    echo "<br>Checked<br><br>";
+    echo "<br>Checked!<br><br>";
     if($msql->isUpdate())
     {
         echo "Trying to Update";
