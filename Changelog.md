@@ -10,6 +10,11 @@
 
 ## Version 1.5.x
 
+### v1.5.6
+[14.12.2017]  
+`+` Added echo loggin for Updating  
+`~` Beautifyed update test
+
 ### v1.5.5
 [12.12.2017]  
 `+` Added API Auth for more than 60 Requests from one pc (Usefull if the Update check is called on multiple sites)

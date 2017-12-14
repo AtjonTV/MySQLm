@@ -7,12 +7,12 @@
      * 
      *  Documentation of MySQLm can be found on http://Github.com/AtjonTV/MySQLm/wiki .
      */
-    class MySQLm # Version 1.5.5:12_12_2017
+    class MySQLm # Version 1.5.6:14_12_2017
     {
         /* Private Variables */
-        private $version = "1.5.5"; 
-        private $version_date = "1.5.5:12_12_2017";
-        private $version_arr = array('major'=>1,'minor'=>5,'patch'=>5, 'release'=>23);
+        private $version = "1.5.6"; 
+        private $version_date = "1.5.6:14_12_2017";
+        private $version_arr = array('major'=>1,'minor'=>5,'patch'=>6, 'release'=>24);
         private $connectionOpen = false;
         private $connectionInfo = null;
         private $connection = null;
@@ -571,36 +571,59 @@
                 return "There is no new Version, your up to date!";
         }
 
-        function autoUpdate()
+        function autoUpdate($echo)
         {
             if($this->connectionOpen)
                 $this->closeConnection();
 
-            if($this->isUpdate())
-                $this->doUpdate();
+            if($this->isUpdate($echo))
+                $this->doUpdate($echo);
         }
 
-        function isUpdate()
+        function isUpdate($echo)
         {
+            if($echo)
+                echo '<span id="msql-update">[MySQLm::Version Check] Downloading release list</span><br>';
             $res = $this->curlGET("https://api.github.com/repos/atjontv/mysqlm/releases/latest");
             $arr = json_decode($res, true);
             $ver = $arr['tag_name'];
             $ver = str_replace('v', '', $ver);
             $updateData = $arr;
             
+            if($echo)
+                echo '<span id="msql-update">[MySQLm::Version Check] Compairing versions</span><br>';
             if(version_compare($ver, $this->version, '>'))
+            {    
+                if($echo)
+                    echo '<span id="msql-update">[MySQLm::Version Check] New version detected</span><br>';
                 return true;
+            }
             else
+            {
+                if($echo)
+                    echo '<span id="msql-update">[MySQLm::Version Check] No new version detected</span><br>';
                 return false;
+            }
         }
 
-        function doUpdate()
+        function doUpdate($echo)
         {
+            if($echo)
+                echo '<span id="msql-update">[MySQLm::Updater] Getting Version data</span><br>';
             if($this->updateData == null)
+            {
+                if($echo)
+                    echo '<span id="msql-update">[MySQLm::Updater] Downloading Version data</span><br>';
                 $this->updateData = json_decode($this->curlGET("https://api.github.com/repos/atjontv/mysqlm/releases/latest"), true);
-            
+            }
+            if($echo)
+                echo '<span id="msql-update">[MySQLm::Updater] Downloading updates</span><br>';
             $update = file_get_contents($this->updateData['assets'][0]['browser_download_url']);
+            if($echo)
+                echo '<span id="msql-update">[MySQLm::Updater] Installing Updates</span><br>';
             file_put_contents(__FILE__, $update);
+            if($echo)
+                echo '<span id="msql-update">[MySQLm::Updater] Updates done.</span>';
         }
 
         /*
