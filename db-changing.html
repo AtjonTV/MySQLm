@@ -26,14 +26,36 @@
     <body>
         <div class="header-t">
             <div class="card bg-dark text-white">
-                <div class="card-body">MySQLm Docs - Creating - <a href="index.html">back</a></div>
+                <div class="card-body">MySQLm Docs - Changing - <a href="index.html">back</a></div>
             </div>
         </div>
         <div id="div-container">
             <div class="center">
-                <h3></h3>
-                <span></span>
+                <h3>How to Change Database?</h3>
             </div>
+            <div class="spacer"></div>
+            <pre class="language-php"><code class="language-php">
+&lt;?php
+    # Including MySQLm [See https://github.com/AtjonTV/MySQLm/wiki/1.-Getting-Started or https://atjontv.github.io/MySQLm/starting.html]
+    include 'https://raw.githubusercontent.com/AtjonTV/MySQLm/dev-1.5/src/MySQLm.php';
+    # Creating MySQLm Object with direct connect [ See https://github.com/AtjonTV/MySQLm/wiki/2-Connecting or https://atjontv.github.io/MySQLm/db-connecting.html]
+    $msql = new MySQLm("database-server.com", 3306, "myusername", "userspassword", "databasename", "charset");
+
+    // MySQLm is connected to "database", but what if we want to connect to "shop_database"?
+    # We do this:
+    $msql->executeUse("shop_database");
+    # MySQLm::executeUse(); executes a SQL Querry, it automaticly wants to use a USE command,
+    #   so you need to give it a database name.
+
+    // OR
+    $msql->changeDatabase("shop_database");
+    # MySQLm::changeDatabase(); executes a SQL Querry, it automaticly wants to use a USE command,
+    #   so you need to give it a database name.
+    ## It is the exact the same thing as executeUse!
+
+    $msql->dispose("acc", "x");
+?&gt;
+            </code></pre>
         </div>
         <div class="footer-b">
             <div class="card bg-dark text-white">

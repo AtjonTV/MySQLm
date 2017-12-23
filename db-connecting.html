@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport"
+              content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <title>MySQLm Docs 2.0</title>
+        <!-- Latest compiled and minified CSS -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css">
+
+        <!-- jQuery library -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+        <!-- Popper JS -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.6/umd/popper.min.js"></script>
+
+        <!-- Latest compiled JavaScript -->
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js"></script>
+
+        <link rel="stylesheet" href="ext/prism.css">
+        <script src="ext/prism.js"></script>
+
+        <link rel="stylesheet" href="./style/main.css">
+    </head>
+    <body>
+        <div class="header-t">
+            <div class="card bg-dark text-white">
+                <div class="card-body">MySQLm Docs - Connecting - <a href="index.html">back</a></div>
+            </div>
+        </div>
+        <div id="div-container">
+            <div class="center">
+                <h3>How to Connect?</h3>
+            </div>
+            <div class="spacer"></div>
+            <pre class="language-php"><code class="language-php">
+&lt;?php
+    # The first and easy way to connect to an MySQL Server is to use auto-connect:
+?&gt;
+
+&lt;?php
+    # Including MySQLm [See https://github.com/AtjonTV/MySQLm/wiki/1.-Getting-Started or https://atjontv.github.io/MySQLm/starting.html]
+    include 'https://raw.githubusercontent.com/AtjonTV/MySQLm/dev-1.5/src/MySQLm.php';
+    // MySQLm::__construct takes 5 arguments: server, port, user, password, database 
+    $msql = new MySQLm("database-server.com", 3306, "myusername", "userspassword", "databasename", "charset");
+    $msql->dispose("acc", "x"); // Closing the connection and destroying the Object internaly
+?&gt;
+
+
+&lt;?php
+    # The second and also easy way to connect, is using connect();
+?&gt;
+
+&lt;?php
+    # Including MySQLm [See https://github.com/AtjonTV/MySQLm/wiki/1.-Getting-Started or https://atjontv.github.io/MySQLm/starting.html]
+    include 'https://raw.githubusercontent.com/AtjonTV/MySQLm/dev-1.5/src/MySQLm.php';
+    // MySQLm::__construct can be used without any real arguments
+    $msql = new MySQLm("", "", "", "", "", "");
+    // MySQLm::connect takes the same 5 arguments as __construct: server, port, user, password, database
+    $msql->connect("database-server.com", 3306, "myusername", "userspassword", "databasename", "charset");
+    $msql->dispose("acc", "x"); // Closing the connection and destroying the Object internaly
+?&gt;
+
+
+&lt;?php
+    # The third way is to connect without a given database and manualy use one
+?&gt;
+
+&lt;?php
+    # Including MySQLm [See https://github.com/AtjonTV/MySQLm/wiki/1.-Getting-Started or https://atjontv.github.io/MySQLm/starting.html]
+    include 'https://raw.githubusercontent.com/AtjonTV/MySQLm/dev-1.5/src/MySQLm.php';
+    // MySQLm::__construct can be used without any real arguments
+    $msql = new MySQLm("", "", "", "", "", "");
+    // MySQLm::connect_ndb only takes the same 4 arguments: server, port, user, password
+    $msql->connect_ndb("database-server.com", 3306, "myusername", "userspassword", "charset");
+    // Manualy running the USE command
+    $msql->executeUse("USE databasename;");
+    $msql->dispose("acc", "x"); // Closing the connection and destroying the Object internaly
+?&gt;
+            </code></pre>
+        </div>
+        <div class="footer">
+            <div class="card bg-dark text-white">
+                <div class="card-body">Copytight &copy; 2015-2017 ATVG-Studios, All Rights Reserved. (Made with Bootstrap 4)</div>
+            </div>
+        </div>
+    </body>
+</html>
