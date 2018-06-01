@@ -8,6 +8,12 @@
 
 ***
 
+## Version 1.6.x
+
+### v1.6.0
+[01.05.2018]  
+`~` Updates now ran from GitLab
+
 ## Version 1.5.x
 
 ### v1.5.7

@@ -12,7 +12,7 @@
         /* Private Variables */
         private $version = "1.5.7"; 
         private $version_date = "1.5.7:01_05_2018";
-        private $version_arr = array('major'=>1,'minor'=>5,'patch'=>7, 'release'=>25);
+        private $version_arr = array('major'=>1,'minor'=>5,'patch'=>7, 'release'=>26);
         private $connectionOpen = false;
         private $connectionInfo = null;
         private $connection = null;
