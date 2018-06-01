@@ -7,12 +7,12 @@
      * 
      *  Documentation of MySQLm can be found on http://Github.com/AtjonTV/MySQLm/wiki .
      */
-    class MySQLm # Version 1.5.6:14_12_2017
+    class MySQLm # Version 1.5.7:01_05_2018
     {
         /* Private Variables */
-        private $version = "1.5.6"; 
-        private $version_date = "1.5.6:14_12_2017";
-        private $version_arr = array('major'=>1,'minor'=>5,'patch'=>6, 'release'=>25);
+        private $version = "1.5.7"; 
+        private $version_date = "1.5.7:01_05_2018";
+        private $version_arr = array('major'=>1,'minor'=>5,'patch'=>7, 'release'=>25);
         private $connectionOpen = false;
         private $connectionInfo = null;
         private $connection = null;
@@ -135,9 +135,10 @@
         }
 
         /* Function to select database */
-        function selectDatabase($db)
+        function selectDatabase($db, $uqe = false)
         {
-            $db = $this->escapeStringTrim($db);
+            if(!$uqe)
+                $db = $this->escapeStringTrim($db);
             $this->checkVars(array($db), "selectDatabase($db)");
             if($this->connectionOpen)
             {
@@ -171,9 +172,10 @@
         }
 
         /* Set a QueryString to execute later */
-        function setQueryString($query)
+        function setQueryString($query, $uqe = false)
         {
-            $query = $this->escapeStringTrim($query);
+            if(!$uqe)
+                $query = $this->escapeStringTrim($query);
             $this->checkVars(array($query), "setQueryString($query)");
 
             if($this->connectionOpen)
@@ -183,7 +185,7 @@
         }
 
         /* Set the Charset on Connection */
-        function setCharset($charset)
+        function setCharset($charset = "utf8")
         {
             if(!$this->checkConnection())
             $this->throwError("Could not Connect to the Database, Object Disposed.", 'dispose');
@@ -207,9 +209,10 @@
         }
         
         /* Execute query string */
-        function executeQuery($query)
+        function executeQuery($query, $uqe = false)
         {
-            $query = $this->escapeStringTrim($query);
+            if(!$uqe)
+                $query = $this->escapeStringTrim($query);
             $this->checkVars(array($query), "executeQuery($query)");
             if($this->connectionOpen)
             {
@@ -222,10 +225,11 @@
         }
 
         /* Execute query x times */
-        function executeQueryMultiTimes($query, $times)
+        function executeQueryMultiTimes($query, $times, $uqe = false)
         {
             $this->checkVars(array($query), "executeQueryMultiTimes($query)");
-            $query = $this->escapeStringTrim($query);
+            if(!$uqe)
+                $query = $this->escapeStringTrim($query);
             if(!$this->connectionOpen)
                 $this->throwError("ERROR, the connection seams to be closed. Run connect() or reconnect() to make a connection", "x");
 
@@ -239,9 +243,10 @@
         }
 
         /* Execute query string */
-        function executeCreate($query)
+        function executeCreate($query, $uqe = false)
         {
-            $query = $this->escapeStringTrim($query);
+            if(!$uqe)
+                $query = $this->escapeStringTrim($query);
             $this->checkVars(array($query), "executeCreate($query)");
             if($this->connectionOpen)
             {
@@ -254,9 +259,10 @@
         }
 
         /* Execute query string */
-        function executeUse($query)
+        function executeUse($query, $uqe = false)
         {
-            $query = $this->escapeStringTrim($query);
+            if(!$uqe)
+                $query = $this->escapeStringTrim($query);
             $this->checkVars(array($query), "executeUse($query)");
             if($this->connectionOpen)
             {
@@ -269,15 +275,16 @@
         }
 
         /* Execute query string */
-        function executeSelect($query, $returnType)
+        function executeSelect($query, $returnType, $uqe = false)
         {
-            $query = $this->escapeStringTrim($query);
+            if(!$uqe)
+                $query = $this->escapeStringTrim($query);
             $this->checkVars(array($query), "executeSelect($query)");
             if($this->connectionOpen)
             {
                 $lresult = $this->connection->query("SELECT ".$query)
                     or $this->throwError("Error while querying the Database. [executeSelect($query, $returnType);] [".$this->connection->error."]", "x");
-                if($returnType == E_ReturnType::TWODIMENSIONAL_ARRAY || $returnType == E_ReturnType::TWO_D_ARRAY)
+                if($returnType == E_ReturnType::TWODIMENSIONAL_ARRAY || $returnType == E_ReturnType::TWO_D_ARRAY || $returnType === 2)
                 {
                     $llresult = array();
                     while($res = mysqli_fetch_array($lresult, MYSQLI_NUM))
@@ -288,7 +295,7 @@
                     mysqli_free_result($lresult);
                     return $this->lastResult;
                 }
-                else if ($returnType == E_ReturnType::MYSQL_TABLE)
+                else if ($returnType == E_ReturnType::MYSQL_TABLE || $returnType === 1)
                 {
                     $this->lastResult = $lresult;
                     return $this->lastResult;
@@ -299,9 +306,10 @@
         }
 
         /* Execute query string */
-        function executeInsert($query)
+        function executeInsert($query, $uqe = false)
         {
-            $query = $this->escapeStringTrim($query);
+            if(!$uqe)
+                $query = $this->escapeStringTrim($query);
             $this->checkVars(array($query), "executeInsert($query)");
             if($this->connectionOpen)
             {
@@ -314,9 +322,10 @@
         }
 
         /* Execute query string */
-        function executeDelete($query)
+        function executeDelete($query, $uqe = false)
         {
-            $query = $this->escapeStringTrim($query);
+            if(!$uqe)
+                $query = $this->escapeStringTrim($query);
             $this->checkVars(array($query), "executeDelete($query)");
             if($this->connectionOpen)
             {
@@ -329,9 +338,10 @@
         }
 
         /* Execute query string */
-        function executeUpdate($query)
+        function executeUpdate($query, $uqe = false)
         {
-            $query = $this->escapeStringTrim($query);
+            if(!$uqe)
+                $query = $this->escapeStringTrim($query);
             $this->checkVars(array($query), "executeUpdate($query)");
             if($this->connectionOpen)
             {
@@ -344,8 +354,9 @@
         }
 
         /* Execute query string */
-        function executeDrop($query)
+        function executeDrop($query, $uqe = false)
         {
+            if(!$uqe)
             $query = $this->escapeStringTrim($query);
             $this->checkVars(array($query), "executeDrop($query)");
             if($this->connectionOpen)
@@ -708,8 +719,7 @@
     abstract class E_ReturnType
     {
         const MYSQL_TABLE = 1;
-        const SQLITE_TABLE = 2;
-        const TWODIMENSIONAL_ARRAY = 3;
-        const TWO_D_ARRAY = 3;
+        const TWODIMENSIONAL_ARRAY = 2;
+        const TWO_D_ARRAY = 2;
     }
 ?>

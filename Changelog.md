@@ -10,6 +10,11 @@
 
 ## Version 1.5.x
 
+### v1.5.7
+[01.05.2018]  
+`+` Unsafe Query Execution (UQE)  
+`+` Default charset param
+
 ### v1.5.6
 [14.12.2017]  
 `+` Added echo loggin for Updating  
