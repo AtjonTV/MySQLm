@@ -8,7 +8,18 @@
 
 ***
 
+## Version 1.6.x
+
+### v1.6.0
+[01.05.2018]  
+`~` Updates now ran from GitLab
+
 ## Version 1.5.x
+
+### v1.5.7
+[01.05.2018]  
+`+` Unsafe Query Execution (UQE)  
+`+` Default charset param
 
 ### v1.5.6
 [14.12.2017]  
