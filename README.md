@@ -2,31 +2,21 @@
 MySQLm is an 'Library' made to be used to connect to a MySQL Server.
 MySQLm is made with OOP (Object Oriented Programming) and used MySQLi [OOP]
 
-The newest version of MySQLm is **[1.5.0](https://gist.github.com/AtjonTV/6040e71b114a52189405084ad0832bc0#v150)** Released on **10th Dec. 2017**
-
-### **IF YOU WANT TO USE MySQLm PLEASE USE VERSION [1.5.4](https://github.com/AtjonTV/MySQLm/releases/tag/v1.5.4) OR NEWER DUE TO A SECURITY UPDATE MADE IN VERSION 1.5.1**
+The newest version of MySQLm is **[1.5.6](https://gitlab.atvg-studios.at/root/MySQLm/tags/v1.5.6)** Released on **14th Dec. 2017**
 
 Development branch:  
-`https://github.com/AtjonTV/MySQLm/tree/dev-1.5`
-
-Bare branch:  
-`https://raw.githubusercontent.com/AtjonTV/MySQLm/dev/`
-
-Development Build:  
-`https://raw.githubusercontent.com/AtjonTV/MySQLm/dev-1.5/src/MySQLm.php`
+`https://gitlab.atvg-studios.at/root/MySQLm/tree/dev-1.6`
 
 Release Build:  
-`https://raw.githubusercontent.com/AtjonTV/MySQLm/master/src/MySQLm.php`
+`https://gitlab.atvg-studios.at/root/MySQLm/`
 
 # Report Bugs or Wishes  
 You can Report Bugs or add Wishes on our Bugtracker Site:  
 
-| URL                               |
-| --------------------------------- |
-| http://bugtracker.atvg-studios.at |
+[Issues](https://gitlab.atvg-studios.at/root/MySQLm/issues)
 
 # How to use MySQLm?
-See the wiki: https://github.com/AtjonTV/MySQLm/wiki
+See the [Wiki](https://gitlab.atvg-studios.at/root/MySQLm/wikis/home)
 
 # License
 This Software is Licensed under ATVG-Studios's OSPL [ http://www.ospl.atvg-studios.at/ ]

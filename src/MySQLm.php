@@ -3,33 +3,35 @@
      *  Copyright 2015-2018 AtjonTV (Thomas Obernosterer)
      * 
      *  This is an OSPL Project
-     *      OSPL is an License by ATVG-Studios: http://atvg-studios.at/OSPLv1.1
+     *      OSPL is an License by ATVG-Studios: http://open-source-project-license.atvg-studios.at/
      * 
-     *  Documentation of MySQLm can be found on http://Github.com/AtjonTV/MySQLm soon.
+     *  Documentation of MySQLm can be found on http://Github.com/AtjonTV/MySQLm/wiki .
      */
-    class MySQLm # Version 1.5.0:10_12_2017
+    class MySQLm # Version 1.5.6:14_12_2017
     {
         /* Private Variables */
-        private $version = "1.5.0:10_12_2017";
-        private $version_arr = array('major'=>1,'minor'=>5,'patch'=>0);
+        private $version = "1.5.6"; 
+        private $version_date = "1.5.6:14_12_2017";
+        private $version_arr = array('major'=>1,'minor'=>5,'patch'=>6, 'release'=>25);
         private $connectionOpen = false;
         private $connectionInfo = null;
         private $connection = null;
         private $queryString = null;
         private $lastResult = null;
         private $lastInternalError = null;
+        private $updateData = false;
 
         /* Constructor for the Object to directly open a connection */
         function __construct($host, $port, $user, $pass, $db, $charset) 
         {
             $this->checkExtensions();
 
-            if(empty($host)&&empty($port)&&empty($user)&&empty($pass)&&empty($db)&&empty($charset))
+            if(empty($host)&&empty($port)&&empty($user)&&empty($db)&&empty($charset))
             {
                 $this->lastInternalError = "at __construct: NO ARGUMENTS GIVEN, CONNECTION LESS OBJECT.";
             }
             else{
-                $this->checkVars(array($host, $port, $user, $pass, $db), "__construct($host, $port, $user, $pass, $db)");
+                $this->checkVars(array($host, $port, $user, $db), "__construct($host, $port, $user, $pass, $db)");
 
 				if(empty($charset)){
 					$this->$charset="utf8";
@@ -66,7 +68,7 @@
         {
             $this->checkExtensions();
 
-            $this->checkVars(array($host, $port, $user, $pass, $db), "connect($host, $port, $user, $pass, $db)");            
+            $this->checkVars(array($host, $port, $user, $db), "connect($host, $port, $user, $pass, $db)");            
 
 			if(empty($charset)){
 				$this->$charset="utf8";
@@ -102,7 +104,7 @@
         {
             $this->checkExtensions();
 
-            $this->checkVars(array($host, $port, $user, $pass), "connect_ndb($host, $port, $user, $pass)");            
+            $this->checkVars(array($host, $port, $user), "connect_ndb($host, $port, $user, $pass)");            
             
             if(empty($charset)){
 				$this->$charset="utf8";
@@ -135,6 +137,7 @@
         /* Function to select database */
         function selectDatabase($db)
         {
+            $db = $this->escapeStringTrim($db);
             $this->checkVars(array($db), "selectDatabase($db)");
             if($this->connectionOpen)
             {
@@ -150,7 +153,7 @@
         /* Function to close a connection */
         function closeConnection()
         {
-            if(checkConnection())
+            if($this->checkConnection())
             {
                 $this->connection->close();
                 $this->connectionOpen = false;
@@ -170,6 +173,7 @@
         /* Set a QueryString to execute later */
         function setQueryString($query)
         {
+            $query = $this->escapeStringTrim($query);
             $this->checkVars(array($query), "setQueryString($query)");
 
             if($this->connectionOpen)
@@ -205,6 +209,8 @@
         /* Execute query string */
         function executeQuery($query)
         {
+            $query = $this->escapeStringTrim($query);
+            $this->checkVars(array($query), "executeQuery($query)");
             if($this->connectionOpen)
             {
                 $lresult = $this->connection->query($query) 
@@ -215,9 +221,27 @@
                 $this->throwError("ERROR, the connection seams to be closed. Run connect() or reconnect() to make a connection", "x");
         }
 
+        /* Execute query x times */
+        function executeQueryMultiTimes($query, $times)
+        {
+            $this->checkVars(array($query), "executeQueryMultiTimes($query)");
+            $query = $this->escapeStringTrim($query);
+            if(!$this->connectionOpen)
+                $this->throwError("ERROR, the connection seams to be closed. Run connect() or reconnect() to make a connection", "x");
+
+            $lresult = array();
+            for($i = 0; $i < $times; $i++)
+            {
+                $lresult[$i] = $this->connection->query($query)
+                or $this->throwError("There was an error while querying the database. [executeQueryMultiTimes($query, $times);] [".$this->connection->error."]", "x");
+            }
+            $this->lastResult = $lresult;
+        }
+
         /* Execute query string */
         function executeCreate($query)
         {
+            $query = $this->escapeStringTrim($query);
             $this->checkVars(array($query), "executeCreate($query)");
             if($this->connectionOpen)
             {
@@ -232,6 +256,7 @@
         /* Execute query string */
         function executeUse($query)
         {
+            $query = $this->escapeStringTrim($query);
             $this->checkVars(array($query), "executeUse($query)");
             if($this->connectionOpen)
             {
@@ -246,6 +271,7 @@
         /* Execute query string */
         function executeSelect($query, $returnType)
         {
+            $query = $this->escapeStringTrim($query);
             $this->checkVars(array($query), "executeSelect($query)");
             if($this->connectionOpen)
             {
@@ -275,6 +301,7 @@
         /* Execute query string */
         function executeInsert($query)
         {
+            $query = $this->escapeStringTrim($query);
             $this->checkVars(array($query), "executeInsert($query)");
             if($this->connectionOpen)
             {
@@ -289,6 +316,7 @@
         /* Execute query string */
         function executeDelete($query)
         {
+            $query = $this->escapeStringTrim($query);
             $this->checkVars(array($query), "executeDelete($query)");
             if($this->connectionOpen)
             {
@@ -303,6 +331,7 @@
         /* Execute query string */
         function executeUpdate($query)
         {
+            $query = $this->escapeStringTrim($query);
             $this->checkVars(array($query), "executeUpdate($query)");
             if($this->connectionOpen)
             {
@@ -317,6 +346,7 @@
         /* Execute query string */
         function executeDrop($query)
         {
+            $query = $this->escapeStringTrim($query);
             $this->checkVars(array($query), "executeDrop($query)");
             if($this->connectionOpen)
             {
@@ -493,21 +523,161 @@
             #Check if mysqli is enabled
             if(!extension_loaded('mysqli'))
             {
-                if(!dl('mysqli'))
-                {
-                    $this->throwError("Extension 'mysqli' not Installed or cloud not be found", 'dispose');
-                }
+                if($this->connectionOpen)
+                    $this->throwError("Extension 'mysqli' not Installed. (Please Install 'mysqli')", 'dispose');
+                else
+                $this->throwError("Extension 'mysqli' not Installed. (Please Install 'mysqli')", '');
+            }
+
+            #Check if curl is enabled
+            if(!extension_loaded('curl'))
+            {
+                if($this->connectionOpen)
+                    $this->throwError("Extension 'curl' not Installed. (Please Install 'curl')", 'dispose');
+                else
+                    $this->throwError("Extension 'curl' not Installed. (Please Install 'curl')", '');
+            }
+
+            #Check if zip is enabled
+            if(!extension_loaded('zip'))
+            {
+                if($this->connectionOpen)
+                    $this->throwError("Extension 'zip' not Installed. (Please Install 'zip')", 'dispose');
+                else
+                    $this->throwError("Extension 'zip' not Installed. (Please Install 'zip')", '');
             }
         }
 
         /* Return the version of the MySQL Manager */
-        function getVersion($asString)
+        function getVersion($asString, $stringWithDate)
         {
             if($asString)
-                return $this->version;
+            {
+                if($stringWithDate)
+                    return $this->version_date;
+                else
+                    return $this->version;
+            }
             else
                 return $this->version_arr;
         }
+
+        /* <UPDATE> */
+        function checkForUpdate()
+        {
+            if($this->isUpdate()) 
+                return "There is a new Version! <a href='".$this->updateData['html_url']."'>Get it Here</a>";
+            else
+                return "There is no new Version, your up to date!";
+        }
+
+        function autoUpdate($echo)
+        {
+            if($this->connectionOpen)
+                $this->closeConnection();
+
+            if($this->isUpdate($echo))
+                $this->doUpdate($echo);
+        }
+
+        function isUpdate($echo)
+        {
+            if($echo)
+                echo '<span id="msql-update">[MySQLm::Version Check] Downloading release list</span><br>';
+            $res = $this->curlGET("https://api.github.com/repos/atjontv/mysqlm/releases/latest");
+            $arr = json_decode($res, true);
+            $ver = $arr['tag_name'];
+            $ver = str_replace('v', '', $ver);
+            $updateData = $arr;
+            
+            if($echo)
+                echo '<span id="msql-update">[MySQLm::Version Check] Compairing versions</span><br>';
+            if(version_compare($ver, $this->version, '>'))
+            {    
+                if($echo)
+                    echo '<span id="msql-update">[MySQLm::Version Check] New version detected</span><br>';
+                return true;
+            }
+            else
+            {
+                if($echo)
+                    echo '<span id="msql-update">[MySQLm::Version Check] No new version detected</span><br>';
+                return false;
+            }
+        }
+
+        function doUpdate($echo)
+        {
+            if($echo)
+                echo '<span id="msql-update">[MySQLm::Updater] Getting Version data</span><br>';
+            if($this->updateData == null)
+            {
+                if($echo)
+                    echo '<span id="msql-update">[MySQLm::Updater] Downloading Version data</span><br>';
+                $this->updateData = json_decode($this->curlGET("https://api.github.com/repos/atjontv/mysqlm/releases/latest"), true);
+            }
+            if($echo)
+                echo '<span id="msql-update">[MySQLm::Updater] Downloading updates</span><br>';
+            $update = file_get_contents($this->updateData['assets'][0]['browser_download_url']);
+            if($echo)
+                echo '<span id="msql-update">[MySQLm::Updater] Installing Updates</span><br>';
+            file_put_contents(__FILE__, $update);
+            if($echo)
+                echo '<span id="msql-update">[MySQLm::Updater] Updates done.</span>';
+        }
+
+        /*
+
+        WRITTEN BUT UNUSED:
+
+            $zip = new ZipArchive();
+            $res = $zip->open('UPDATE.zip');
+            if ($res === TRUE) {
+                $zip->extractTo('UPDATE');
+                $zip->close();
+            } else {
+                $this->throwError("Error while unziping the update!", '');
+            }
+
+        */
+
+        private function curlGET($url)
+        {
+            $c = curl_init();
+            curl_setopt($c, CURLOPT_URL, $url);
+            curl_setopt($c, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($c, CURLOPT_USERAGENT,'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.13) Gecko/20080311 Firefox/2.0.0.13');
+            curl_setopt($c, CURLOPT_SSL_VERIFYHOST, 0);
+            curl_setopt($c, CURLOPT_SSL_VERIFYPEER, 0);
+            $headers = array(
+                'Content-Type:application/json',
+                'Authorization: token 900ac7d7a50213908a74b064f7433dd8c6499da6'
+            );
+            curl_setopt($c, CURLOPT_HTTPHEADER, $headers);
+            $res = curl_exec($c);
+            curl_close($c);
+            return $res;
+        }
+
+        private function curlGET_FILE($url, $file)
+        {
+            set_time_limit(0);
+            $fp = fopen ($file, 'w+');
+            $ch = curl_init($url);
+            curl_setopt($ch, CURLOPT_TIMEOUT, 50);
+            curl_setopt($ch, CURLOPT_USERAGENT,'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.13) Gecko/20080311 Firefox/2.0.0.13');
+            curl_setopt($ch, CURLOPT_FILE, $fp); 
+            curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+            $headers = array(
+                'Content-Type:application/json',
+                'Authorization: token 900ac7d7a50213908a74b064f7433dd8c6499da6'
+            );
+            curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+            curl_exec($ch); 
+            curl_close($ch);
+            fclose($fp);
+        }
+        /* </UPDATE> */
 
         /* Return Client/Server Information */
         function getInformation($fromServer)
