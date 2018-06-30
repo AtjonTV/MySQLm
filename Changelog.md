@@ -6,15 +6,20 @@
 
 ## Un-Released (In Development)
 
+### v1.6.0  
+`~` Added new Framework: MySQLm in version 1.6.0
+
 ***
 
 ## Version 1.6.x
 
-### v1.6.0
-[01.05.2018]  
-`~` Updates now ran from GitLab
-
 ## Version 1.5.x
+
+### v1.5.8
+[30.06.2018]  
+`+` Account Registration
+`+` Custom UserAgent
+`~` Updates now run from GitLab
 
 ### v1.5.7
 [01.05.2018]  

@@ -5,14 +5,14 @@
      *  This is an OSPL Project
      *      OSPL is an License by ATVG-Studios: http://open-source-project-license.atvg-studios.at/
      * 
-     *  Documentation of MySQLm can be found on http://Github.com/AtjonTV/MySQLm/wiki .
+     *  Documentation of MySQLm can be found on https://gitlab.atvg-studios.at/root/MySQLm/wikis/home .
      */
-    class MySQLm # Version 1.5.7:01_05_2018
+    class MySQLm # Version 1.5.8:30_06_2018
     {
         /* Private Variables */
-        private $version = "1.5.7"; 
-        private $version_date = "1.5.7:01_05_2018";
-        private $version_arr = array('major'=>1,'minor'=>5,'patch'=>7, 'release'=>26);
+        private $version = "1.5.8"; 
+        private $version_date = "1.5.8:30_06_2018";
+        private $version_arr = array('major'=>1,'minor'=>5,'patch'=>8, 'release'=>27);
         private $connectionOpen = false;
         private $connectionInfo = null;
         private $connection = null;
@@ -22,7 +22,7 @@
         private $updateData = false;
 
         /* Constructor for the Object to directly open a connection */
-        function __construct($host, $port, $user, $pass, $db, $charset) 
+        function __construct($host, $port, $user, $pass, $db, $charset = "utf8") 
         {
             $this->checkExtensions();
 
@@ -64,7 +64,7 @@
         }
 
         /* Function to open a connection */
-        function connect($host, $port, $user, $pass, $db, $charset) 
+        function connect($host, $port, $user, $pass, $db, $charset = "utf8") 
         {
             $this->checkExtensions();
 
@@ -372,9 +372,17 @@
         /* if mysqli::ping() is true it returns true, if mysqli::ping() && connectionOpen is true it returns true, else it always returns false */
         function checkConnection()
         {
-            if($this->connection->ping() && $this->connectionOpen)
-                return true;
-            else if ($this->connection->ping())
+            if($this->connection == null)
+            {
+                $this->lastInternalError = "at checkConnection: THE CONNECTION IS NULL.";
+                return false;
+            }
+            if($this->connectionOpen == false)
+            {
+                $this->lastInternalError = "at checkConnection: THE CONNECTION IS CLOSED.";
+                return false;
+            }
+            if($this->connection->ping())
                 return true;
             else
             {
@@ -414,7 +422,7 @@
         }
 
         /* Closes Open Connection, removes content from Variables [if action "without" is selectet, the varname is not removed]*/
-        function dispose($action, $varname)
+        function dispose($action, $varname = "x")
         {
             $this->checkVars(array($action, $varname), "dispose($action, $varname)");
             if($action === "without")
@@ -548,15 +556,6 @@
                 else
                     $this->throwError("Extension 'curl' not Installed. (Please Install 'curl')", '');
             }
-
-            #Check if zip is enabled
-            if(!extension_loaded('zip'))
-            {
-                if($this->connectionOpen)
-                    $this->throwError("Extension 'zip' not Installed. (Please Install 'zip')", 'dispose');
-                else
-                    $this->throwError("Extension 'zip' not Installed. (Please Install 'zip')", '');
-            }
         }
 
         /* Return the version of the MySQL Manager */
@@ -577,7 +576,7 @@
         function checkForUpdate()
         {
             if($this->isUpdate()) 
-                return "There is a new Version! <a href='".$this->updateData['html_url']."'>Get it Here</a>";
+                return "There is a new Version!";
             else
                 return "There is no new Version, your up to date!";
         }
@@ -595,11 +594,10 @@
         {
             if($echo)
                 echo '<span id="msql-update">[MySQLm::Version Check] Downloading release list</span><br>';
-            $res = $this->curlGET("https://api.github.com/repos/atjontv/mysqlm/releases/latest");
+            $res = $this->curlGET("https://gitlab.atvg-studios.at/api/v4/projects/23/repository/tags");
             $arr = json_decode($res, true);
-            $ver = $arr['tag_name'];
+            $ver = $arr[0]['name'];
             $ver = str_replace('v', '', $ver);
-            $updateData = $arr;
             
             if($echo)
                 echo '<span id="msql-update">[MySQLm::Version Check] Compairing versions</span><br>';
@@ -620,16 +618,8 @@
         function doUpdate($echo)
         {
             if($echo)
-                echo '<span id="msql-update">[MySQLm::Updater] Getting Version data</span><br>';
-            if($this->updateData == null)
-            {
-                if($echo)
-                    echo '<span id="msql-update">[MySQLm::Updater] Downloading Version data</span><br>';
-                $this->updateData = json_decode($this->curlGET("https://api.github.com/repos/atjontv/mysqlm/releases/latest"), true);
-            }
-            if($echo)
                 echo '<span id="msql-update">[MySQLm::Updater] Downloading updates</span><br>';
-            $update = file_get_contents($this->updateData['assets'][0]['browser_download_url']);
+            $update = file_get_contents("https://gitlab.atvg-studios.at/api/v4/projects/23/repository/files/src%2FMySQLm.php/raw?ref=master");
             if($echo)
                 echo '<span id="msql-update">[MySQLm::Updater] Installing Updates</span><br>';
             file_put_contents(__FILE__, $update);
@@ -637,32 +627,16 @@
                 echo '<span id="msql-update">[MySQLm::Updater] Updates done.</span>';
         }
 
-        /*
-
-        WRITTEN BUT UNUSED:
-
-            $zip = new ZipArchive();
-            $res = $zip->open('UPDATE.zip');
-            if ($res === TRUE) {
-                $zip->extractTo('UPDATE');
-                $zip->close();
-            } else {
-                $this->throwError("Error while unziping the update!", '');
-            }
-
-        */
-
         private function curlGET($url)
         {
             $c = curl_init();
             curl_setopt($c, CURLOPT_URL, $url);
             curl_setopt($c, CURLOPT_RETURNTRANSFER, true);
-            curl_setopt($c, CURLOPT_USERAGENT,'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.13) Gecko/20080311 Firefox/2.0.0.13');
+            curl_setopt($c, CURLOPT_USERAGENT,getUserAgent());
             curl_setopt($c, CURLOPT_SSL_VERIFYHOST, 0);
             curl_setopt($c, CURLOPT_SSL_VERIFYPEER, 0);
             $headers = array(
-                'Content-Type:application/json',
-                'Authorization: token 900ac7d7a50213908a74b064f7433dd8c6499da6'
+                'Content-Type:application/json'
             );
             curl_setopt($c, CURLOPT_HTTPHEADER, $headers);
             $res = curl_exec($c);
@@ -676,12 +650,11 @@
             $fp = fopen ($file, 'w+');
             $ch = curl_init($url);
             curl_setopt($ch, CURLOPT_TIMEOUT, 50);
-            curl_setopt($ch, CURLOPT_USERAGENT,'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.13) Gecko/20080311 Firefox/2.0.0.13');
+            curl_setopt($ch, CURLOPT_USERAGENT,getUserAgent());
             curl_setopt($ch, CURLOPT_FILE, $fp); 
             curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
             $headers = array(
-                'Content-Type:application/json',
-                'Authorization: token 900ac7d7a50213908a74b064f7433dd8c6499da6'
+                'Content-Type:application/json'
             );
             curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
             curl_exec($ch); 
@@ -713,6 +686,19 @@
             {
                 return $this->connection->server_version;
             }
+        }
+
+        function getUserAgent()
+        {
+            $kernel_name = php_uname('s');
+            $kernel_version = php_uname('r');
+            $kernel_array = explode('.', $kernel_version);
+            $kernel_version = $kernel_array[0].".".$kernel_array[1]; 
+            $php_version = phpversion();
+            $php_array = explode('.', $php_version);
+            $php_version = $php_array[0].".".$php_array[1];
+            $curl_version = curl_version()['version_number'];
+            return "MySQLm/$version ($version_date) $kernel_name/$kernel_version PHP/$php_version cURL/$curl_version";
         }
     }
 
