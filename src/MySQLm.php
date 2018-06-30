@@ -7,12 +7,12 @@
      * 
      *  Documentation of MySQLm can be found on https://gitlab.atvg-studios.at/root/MySQLm/wikis/home .
      */
-    class MySQLm # Version 1.5.8:30_06_2018
+    class MySQLm # Version 1.5.9:30_06_2018
     {
         /* Private Variables */
-        private $version = "1.5.8"; 
-        private $version_date = "1.5.8:30_06_2018";
-        private $version_arr = array('major'=>1,'minor'=>5,'patch'=>8, 'release'=>27);
+        private $version = "1.5.9";
+        private $version_date = "1.5.9:30_06_2018";
+        private $version_arr = array('major'=>1,'minor'=>5,'patch'=>9, 'release'=>28);
         private $connectionOpen = false;
         private $connectionInfo = null;
         private $connection = null;
@@ -698,7 +698,7 @@
             $php_array = explode('.', $php_version);
             $php_version = $php_array[0].".".$php_array[1];
             $curl_version = curl_version()['version_number'];
-            return "MySQLm/$version ($version_date) $kernel_name/$kernel_version PHP/$php_version cURL/$curl_version";
+            return "MySQLm/$this->version ($this->version_date) $kernel_name/$kernel_version PHP/$php_version cURL/$curl_version";
         }
     }
 

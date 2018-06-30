@@ -15,9 +15,12 @@
 
 ## Version 1.5.x
 
+### v1.5.9
+[30.06.2018]  
+`~` Fixing UserAgent Bug
+
 ### v1.5.8
 [30.06.2018]  
-`+` Account Registration
 `+` Custom UserAgent
 `~` Updates now run from GitLab
 
