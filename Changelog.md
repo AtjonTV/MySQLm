@@ -15,6 +15,12 @@
 
 ## Version 1.5.x
 
+### v1.5.10
+[19.11.2018]  
+`+` DieAfterError setting  
+`~` Prevent force die on error  
+`~` Keeping last error when throwing an error
+
 ### v1.5.9
 [30.06.2018]  
 `~` Fixing UserAgent Bug

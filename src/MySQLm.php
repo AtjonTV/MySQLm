@@ -7,12 +7,12 @@
      * 
      *  Documentation of MySQLm can be found on https://gitlab.atvg-studios.at/root/MySQLm/wikis/home .
      */
-    class MySQLm # Version 1.5.9:30_06_2018
+    class MySQLm # Version 1.5.10:19_11_2018
     {
         /* Private Variables */
-        private $version = "1.5.9";
-        private $version_date = "1.5.9:30_06_2018";
-        private $version_arr = array('major'=>1,'minor'=>5,'patch'=>9, 'release'=>28);
+        private $version = "1.5.10";
+        private $version_date = "1.5.10:19_11_2018";
+        private $version_arr = array('major'=>1,'minor'=>5,'patch'=>10, 'release'=>29);
         private $connectionOpen = false;
         private $connectionInfo = null;
         private $connection = null;
@@ -20,6 +20,7 @@
         private $lastResult = null;
         private $lastInternalError = null;
         private $updateData = false;
+        private $dieAfterError = true;
 
         /* Constructor for the Object to directly open a connection */
         function __construct($host, $port, $user, $pass, $db, $charset = "utf8") 
@@ -40,15 +41,15 @@
                 $this->connection = @new mysqli($host, $user, $pass, $db, $port);
 
                 if(!$this->checkConnection()){
-                    $this->throwError("Could not Connect to the Database, Object Disposed.", 'dispose');
+                    $this->throwError("Could not Connect to the Database, Object Disposed.", 'dispose', $this->dieAfterError);
                 }
                 
                 if (!$this->connection->set_charset($charset)) {
-                    $this->throwError("An Error Occured while loading charset $charset", "dispose");
+                    $this->throwError("An Error Occured while loading charset $charset", "dispose", $this->dieAfterError);
                 }
 
                 if($this->connection->connect_error){
-                	$this->throwError("An Error Occured while opening a connection to the database: ".$this->connection->connect_error, "dispose");
+                	$this->throwError("An Error Occured while opening a connection to the database: ".$this->connection->connect_error, "dispose", $this->dieAfterError);
                 }
     
                 $this->connectionOpen = true;
@@ -77,15 +78,15 @@
             $this->connection = @new mysqli($host, $user, $pass, $db, $port);
             
             if(!$this->checkConnection()){
-                $this->throwError("Could not Connect to the Database, Object Disposed.", 'dispose');
+                $this->throwError("Could not Connect to the Database, Object Disposed.", 'dispose', $this->dieAfterError);
             }
             
             if (!$this->connection->set_charset($charset)) {
-                $this->throwError("An Error Occured while loading charset $charset", "dispose");
+                $this->throwError("An Error Occured while loading charset $charset", "dispose", $this->dieAfterError);
             }
 
             if($this->connection->connect_error){
-            	$this->throwError("An Error Occured while opening a connection to the database: ".$this->connection->connect_error, "dispose");
+            	$this->throwError("An Error Occured while opening a connection to the database: ".$this->connection->connect_error, "dispose", $this->dieAfterError);
             }
                 
             $this->connectionOpen = true;
@@ -113,14 +114,14 @@
             $this->connection = @new mysqli($host.':'.$port, $user, $pass);
             
             if(!$this->checkConnection())
-                $this->throwError("Could not Connect to the Database, Object Disposed.", 'dispose');
+                $this->throwError("Could not Connect to the Database, Object Disposed.", 'dispose', $this->dieAfterError);
             
                 if (!$this->connection->set_charset($charset)) {
-                $this->throwError("An Error Occured while loading charset $charset", "dispose");
+                $this->throwError("An Error Occured while loading charset $charset", "dispose", $this->dieAfterError);
             }
 
             if($this->connection->connect_error)
-                $this->throwError("An Error Occured while opening a connection to the database: ".$this->connection->connect_error, "dispose");
+                $this->throwError("An Error Occured while opening a connection to the database: ".$this->connection->connect_error, "dispose", $this->dieAfterError);
 
             $this->connectionOpen = true;
             $this->lastInternalError = "at connect_ndb: COULD NOT GIVE ONE PARAMETER TO connectionInfo; DaBa -> NO DATABASE TO CONNECT TO.";
@@ -143,12 +144,12 @@
             if($this->connectionOpen)
             {
                 $lresult = $this->connection->query("USE $db;") or
-                    $this->throwError("There was an error while selecting the database. [selectDatabase($db);] [".$this->connection->error."]", "");
+                    $this->throwError("There was an error while selecting the database. [selectDatabase($db);] [".$this->connection->error."]", "", $this->dieAfterError);
                 $this->connectionInfo["DaBa"] = $db;
                 $this->lastResult = $lresult;
             }
             else
-                $this->throwError("ERROR, the connection seams to be closed. Run connect() or reconnect() to make a connection", "x");
+                $this->throwError("ERROR, the connection seams to be closed. Run connect() or reconnect() to make a connection", "x", $this->dieAfterError);
         }
 
         /* Function to close a connection */
@@ -167,7 +168,7 @@
             $this->dispose("without", "connectionInfo");
             $this->connection = @new mysqli($this->connectionInfo["Host"], $this->connectionInfo["Port"], $this->connectionInfo["User"], $this->connectionInfo["Pass"], $this->connectionInfo["DaBa"], $this->connectionInfo["ChSt"]);
             if($this->connection->connect_error)
-                $this->throwError("An Error Occured while opening a connection to the database: ".$this->connection->connect_error, "dispose");
+                $this->throwError("An Error Occured while opening a connection to the database: ".$this->connection->connect_error, "dispose", $this->dieAfterError);
             $this->connectionOpen = true;
         }
 
@@ -181,17 +182,17 @@
             if($this->connectionOpen)
                 $this->queryString;
             else
-                $this->throwError("ERROR, the connection seams to be closed. Run connect() or reconnect() to make a connection", "x");
+                $this->throwError("ERROR, the connection seams to be closed. Run connect() or reconnect() to make a connection", "x", $this->dieAfterError);
         }
 
         /* Set the Charset on Connection */
         function setCharset($charset = "utf8")
         {
             if(!$this->checkConnection())
-            $this->throwError("Could not Connect to the Database, Object Disposed.", 'dispose');
+            $this->throwError("Could not Connect to the Database, Object Disposed.", 'dispose', $this->dieAfterError);
         
             if (!$this->connection->set_charset($charset)) {
-                $this->throwError("An Error Occured while loading charset $charset", "dispose");
+                $this->throwError("An Error Occured while loading charset $charset", "dispose", $this->dieAfterError);
             }
         }
 
@@ -201,11 +202,11 @@
             if($this->connectionOpen)
             {
                 $lresult = $this->connection->query($this->queryString) 
-                    or $this->throwError("There was an error while querying the database. [executeStoredQuery($this->queryString);] [".$this->connection->error."]", "x");
+                    or $this->throwError("There was an error while querying the database. [executeStoredQuery($this->queryString);] [".$this->connection->error."]", "x", $this->dieAfterError);
                 $this->lastResult = $lresult;
             }
             else
-                $this->throwError("ERROR, the connection seams to be closed. Run connect() or reconnect() to make a connection", "x");
+                $this->throwError("ERROR, the connection seams to be closed. Run connect() or reconnect() to make a connection", "x", $this->dieAfterError);
         }
         
         /* Execute query string */
@@ -217,11 +218,11 @@
             if($this->connectionOpen)
             {
                 $lresult = $this->connection->query($query) 
-                    or $this->throwError("There was an error while querying the database. [executeQuery($query);] [".$this->connection->error."]", "x");
+                    or $this->throwError("There was an error while querying the database. [executeQuery($query);] [".$this->connection->error."]", "x", $this->dieAfterError);
                 $this->lastResult = $lresult;
             }
             else
-                $this->throwError("ERROR, the connection seams to be closed. Run connect() or reconnect() to make a connection", "x");
+                $this->throwError("ERROR, the connection seams to be closed. Run connect() or reconnect() to make a connection", "x", $this->dieAfterError);
         }
 
         /* Execute query x times */
@@ -231,13 +232,13 @@
             if(!$uqe)
                 $query = $this->escapeStringTrim($query);
             if(!$this->connectionOpen)
-                $this->throwError("ERROR, the connection seams to be closed. Run connect() or reconnect() to make a connection", "x");
+                $this->throwError("ERROR, the connection seams to be closed. Run connect() or reconnect() to make a connection", "x", $this->dieAfterError);
 
             $lresult = array();
             for($i = 0; $i < $times; $i++)
             {
                 $lresult[$i] = $this->connection->query($query)
-                or $this->throwError("There was an error while querying the database. [executeQueryMultiTimes($query, $times);] [".$this->connection->error."]", "x");
+                or $this->throwError("There was an error while querying the database. [executeQueryMultiTimes($query, $times);] [".$this->connection->error."]", "x", $this->dieAfterError);
             }
             $this->lastResult = $lresult;
         }
@@ -251,11 +252,11 @@
             if($this->connectionOpen)
             {
                 $lresult = $this->connection->query("CREATE ".$query) or
-                    $this->throwError("There was an error while querying the database. [executeCreate($query);] [".$this->connection->error."]", "");
+                    $this->throwError("There was an error while querying the database. [executeCreate($query);] [".$this->connection->error."]", "", $this->dieAfterError);
                 $this->lastResult = $lresult;
             }
             else
-                $this->throwError("ERROR, the connection seams to be closed. Run connect() or reconnect() to make a connection", "x");
+                $this->throwError("ERROR, the connection seams to be closed. Run connect() or reconnect() to make a connection", "x", $this->dieAfterError);
         }
 
         /* Execute query string */
@@ -267,11 +268,11 @@
             if($this->connectionOpen)
             {
                 $lresult = $this->connection->query("USE ".$query) or
-                    $this->throwError("There was an error while querying the database. [executeUse($query);] [".$this->connection->error."]", "");
+                    $this->throwError("There was an error while querying the database. [executeUse($query);] [".$this->connection->error."]", "", $this->dieAfterError);
                 $this->lastResult = $lresult;
             }
             else
-                $this->throwError("ERROR, the connection seams to be closed. Run connect() or reconnect() to make a connection", "x");
+                $this->throwError("ERROR, the connection seams to be closed. Run connect() or reconnect() to make a connection", "x", $this->dieAfterError);
         }
 
         /* Execute query string */
@@ -283,7 +284,7 @@
             if($this->connectionOpen)
             {
                 $lresult = $this->connection->query("SELECT ".$query)
-                    or $this->throwError("Error while querying the Database. [executeSelect($query, $returnType);] [".$this->connection->error."]", "x");
+                    or $this->throwError("Error while querying the Database. [executeSelect($query, $returnType);] [".$this->connection->error."]", "x", $this->dieAfterError);
                 if($returnType == E_ReturnType::TWODIMENSIONAL_ARRAY || $returnType == E_ReturnType::TWO_D_ARRAY || $returnType === 2)
                 {
                     $llresult = array();
@@ -302,7 +303,7 @@
                 }
             }
             else
-                $this->throwError("ERROR, the connection seams to be closed. Run connect() or reconnect() to make a connection", "x");
+                $this->throwError("ERROR, the connection seams to be closed. Run connect() or reconnect() to make a connection", "x", $this->dieAfterError);
         }
 
         /* Execute query string */
@@ -314,11 +315,11 @@
             if($this->connectionOpen)
             {
                 $lresult = $this->connection->query("INSERT ".$query) or
-                    $this->throwError("There was an error while querying the database. [executeInsert($query);] [".$this->connection->error."]", "");
+                    $this->throwError("There was an error while querying the database. [executeInsert($query);] [".$this->connection->error."]", "", $this->dieAfterError);
                 $this->lastResult = $lresult;
             }
             else
-                $this->throwError("ERROR, the connection seams to be closed. Run connect() or reconnect() to make a connection", "x");
+                $this->throwError("ERROR, the connection seams to be closed. Run connect() or reconnect() to make a connection", "x", $this->dieAfterError);
         }
 
         /* Execute query string */
@@ -330,11 +331,11 @@
             if($this->connectionOpen)
             {
                 $lresult = $this->connection->query("DELETE ".$query) or
-                    $this->throwError("There was an error while querying the database. [executeDelete($query);] [".$this->connection->error."]", "");
+                    $this->throwError("There was an error while querying the database. [executeDelete($query);] [".$this->connection->error."]", "", $this->dieAfterError);
                 $this->lastResult = $lresult;
             }
             else
-                $this->throwError("ERROR, the connection seams to be closed. Run connect() or reconnect() to make a connection", "x");
+                $this->throwError("ERROR, the connection seams to be closed. Run connect() or reconnect() to make a connection", "x", $this->dieAfterError);
         }
 
         /* Execute query string */
@@ -346,11 +347,11 @@
             if($this->connectionOpen)
             {
                 $lresult = $this->connection->query("UPDATE ".$query) or
-                    $this->throwError("There was an error while querying the database. [executeUpdate($query);] [".$this->connection->error."]", "");
+                    $this->throwError("There was an error while querying the database. [executeUpdate($query);] [".$this->connection->error."]", "", $this->dieAfterError);
                 $this->lastResult = $lresult;
             }
             else
-                $this->throwError("ERROR, the connection seams to be closed. Run connect() or reconnect() to make a connection", "x");
+                $this->throwError("ERROR, the connection seams to be closed. Run connect() or reconnect() to make a connection", "x", $this->dieAfterError);
         }
 
         /* Execute query string */
@@ -362,11 +363,11 @@
             if($this->connectionOpen)
             {
                 $lresult = $this->connection->query("DROP ".$query) or
-                    $this->throwError("There was an error while querying the database. [executeDrop($query);] [".$this->connection->error."]", "");
+                    $this->throwError("There was an error while querying the database. [executeDrop($query);] [".$this->connection->error."]", "", $this->dieAfterError);
                 $this->lastResult = $lresult;
             }
             else
-                $this->throwError("ERROR, the connection seams to be closed. Run connect() or reconnect() to make a connection", "x");
+                $this->throwError("ERROR, the connection seams to be closed. Run connect() or reconnect() to make a connection", "x", $this->dieAfterError);
         }
 
         /* if mysqli::ping() is true it returns true, if mysqli::ping() && connectionOpen is true it returns true, else it always returns false */
@@ -392,20 +393,29 @@
         }
 
         /* Kills the Script and displays a error Message */
-        function throwError($message, $action)
+        function throwError($message, $action, $die_after = true)
         {
             if(!isset($action) || empty($action))
                 $action = "";
             switch($action)
             {
                 case "dispose":
-                    $this->dispose("acc", "x");
-                    die($message);
+                    $this->dispose("without", "lastInternalError");
+                    if($die_after)
+                        die($message);
+                    else
+                        echo $message;
                 case "closeConnection":
                     $this->closeConnection();
-                    die($message);
+                    if($die_after)
+                        die($message);
+                    else
+                        echo $message;
                 default:
-                    die($message);
+                    if($die_after)
+                        die($message);
+                    else
+                        echo $message;
             }
         }
 
@@ -521,7 +531,7 @@
             }
             
             if(!$ok)
-                $this->throwError("One or more variables in '$loc' are null or empty", "x");
+                $this->throwError("One or more variables in '$loc' are null or empty", "x", $this->dieAfterError);
         }
 
         /* Escape String to get Real SQL Code */
@@ -543,18 +553,18 @@
             if(!extension_loaded('mysqli'))
             {
                 if($this->connectionOpen)
-                    $this->throwError("Extension 'mysqli' not Installed. (Please Install 'mysqli')", 'dispose');
+                    $this->throwError("Extension 'mysqli' not Installed. (Please Install 'mysqli')", 'dispose', $this->dieAfterError);
                 else
-                $this->throwError("Extension 'mysqli' not Installed. (Please Install 'mysqli')", '');
+                $this->throwError("Extension 'mysqli' not Installed. (Please Install 'mysqli')", '', $this->dieAfterError);
             }
 
             #Check if curl is enabled
             if(!extension_loaded('curl'))
             {
                 if($this->connectionOpen)
-                    $this->throwError("Extension 'curl' not Installed. (Please Install 'curl')", 'dispose');
+                    $this->throwError("Extension 'curl' not Installed. (Please Install 'curl')", 'dispose', $this->dieAfterError);
                 else
-                    $this->throwError("Extension 'curl' not Installed. (Please Install 'curl')", '');
+                    $this->throwError("Extension 'curl' not Installed. (Please Install 'curl')", '', $this->dieAfterError);
             }
         }
 
@@ -700,6 +710,21 @@
             $curl_version = curl_version()['version_number'];
             return "MySQLm/$this->version ($this->version_date) $kernel_name/$kernel_version PHP/$php_version cURL/$curl_version";
         }
+
+        function setConfig($setting, $value)
+        {
+            switch($setting)
+            {
+                case "die_after_error":
+                    if(gettype($value) === "boolean")
+                        $this->dieAfterError = $value;
+                    else
+                        return "The value needs to be a boolean in order to be valid.";
+                default:
+                    return "Could not find that setting; You can find a list of settings in the settings.info file";
+            }
+        }
+
     }
 
     abstract class E_ReturnType
