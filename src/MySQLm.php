@@ -7,12 +7,12 @@
      * 
      *  Documentation of MySQLm can be found on https://gitlab.atvg-studios.at/root/MySQLm/wikis/home .
      */
-    class MySQLm # Version 1.5.10:19_11_2018
+    class MySQLm # Version 1.5.11:21_11_2018
     {
         /* Private Variables */
-        private $version = "1.5.10";
-        private $version_date = "1.5.10:19_11_2018";
-        private $version_arr = array('major'=>1,'minor'=>5,'patch'=>10, 'release'=>29);
+        private $version = "1.5.11";
+        private $version_date = "1.5.11:21_11_2018";
+        private $version_arr = array('major'=>1,'minor'=>5,'patch'=>11, 'release'=>30);
         private $connectionOpen = false;
         private $connectionInfo = null;
         private $connection = null;
@@ -378,11 +378,6 @@
                 $this->lastInternalError = "at checkConnection: THE CONNECTION IS NULL.";
                 return false;
             }
-            if($this->connectionOpen == false)
-            {
-                $this->lastInternalError = "at checkConnection: THE CONNECTION IS CLOSED.";
-                return false;
-            }
             if($this->connection->ping())
                 return true;
             else
@@ -725,6 +720,15 @@
             }
         }
 
+        function getStats()
+        {
+            return $this->connection->stat;
+        }
+
+        function getConnection()
+        {
+            return $this->connection;
+        }
     }
 
     abstract class E_ReturnType

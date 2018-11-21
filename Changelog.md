@@ -6,6 +6,11 @@
 
 ## Version 1.5.x
 
+### v1.5.11
+[21.11.2018]  
+`+` GetConnection function  
+`+` GetStats function
+
 ### v1.5.10
 [19.11.2018]  
 `+` DieAfterError setting  
