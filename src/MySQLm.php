@@ -7,12 +7,12 @@
      * 
      *  Documentation of MySQLm can be found on https://gitlab.atvg-studios.at/root/MySQLm/wikis/home .
      */
-    class MySQLm # Version 1.5.10:19_11_2018
+    class MySQLm # Version 1.6.0:21_11_2018
     {
         /* Private Variables */
-        private $version = "1.5.10";
-        private $version_date = "1.5.10:19_11_2018";
-        private $version_arr = array('major'=>1,'minor'=>5,'patch'=>10, 'release'=>29);
+        private $version = "1.6.0";
+        private $version_date = "1.6.0:21_11_2018";
+        private $version_arr = array('major'=>1,'minor'=>6,'patch'=>0, 'release'=>29);
         private $connectionOpen = false;
         private $connectionInfo = null;
         private $connection = null;
@@ -23,20 +23,28 @@
         private $dieAfterError = true;
 
         /* Constructor for the Object to directly open a connection */
-        function __construct($host, $port, $user, $pass, $db, $charset = "utf8") 
+        function __construct($json) 
         {
             $this->checkExtensions();
 
-            if(empty($host)&&empty($port)&&empty($user)&&empty($db)&&empty($charset))
-            {
-                $this->lastInternalError = "at __construct: NO ARGUMENTS GIVEN, CONNECTION LESS OBJECT.";
+            if(empty($json)){
+                $this->lastInternalError = "at __construct: NO JSON BLOB GIVEN";
             }
             else{
-                $this->checkVars(array($host, $port, $user, $db), "__construct($host, $port, $user, $pass, $db)");
+                /* PARSE JSON START */
+                $blob = $json;
+                if(gettype($blob) == "string"){
+                    $blob = json_decode($blob);
+                }
 
-				if(empty($charset)){
-					$this->$charset="utf8";
-				}
+                $host = $blob->host;
+                $port = ($blob->port ? $blob->port : 3306); // Default value for Port
+                $user = $blob->user;
+                $db = $blob->db;
+                $charset = ($blob->charset ? $blob->charset : "utf8"); // Default value for Charset
+                /* PARSE JSON END */
+
+                $this->checkVars(array($host, $port, $user, $db), "__construct($host, $port, $user, $pass, $db)");
 
                 $this->connection = @new mysqli($host, $user, $pass, $db, $port);
 

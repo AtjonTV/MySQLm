@@ -7,7 +7,7 @@
 ## Un-Released (In Development)
 
 ### v1.6.0  
-`~` Added new Framework: MySQLm in version 1.6.0
+`~` New dataworks framework with JSON
 
 ***
 
