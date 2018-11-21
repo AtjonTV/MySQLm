@@ -40,6 +40,7 @@
                 $host = $blob->host;
                 $port = ($blob->port ? $blob->port : 3306); // Default value for Port
                 $user = $blob->user;
+                $pass = $blob->password;
                 $db = $blob->database;
                 $charset = ($blob->charset ? $blob->charset : "utf8"); // Default value for Charset
                 /* PARSE JSON END */
@@ -90,6 +91,7 @@
                 $host = $blob->host;
                 $port = ($blob->port ? $blob->port : 3306); // Default value for Port
                 $user = $blob->user;
+                $pass = $blob->password;
                 $db = ($blob->database ? $blob->database : false);
                 $charset = ($blob->charset ? $blob->charset : "utf8"); // Default value for Charset
                 /* PARSE JSON END */
