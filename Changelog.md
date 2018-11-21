@@ -4,16 +4,12 @@
 
 ***
 
-## Un-Released (In Development)
-
-### v1.6.0  
-`~` Added new Framework: MySQLm in version 1.6.0
-
-***
-
-## Version 1.6.x
-
 ## Version 1.5.x
+
+### v1.5.11
+[21.11.2018]  
+`+` GetConnection function  
+`+` GetStats function
 
 ### v1.5.10
 [19.11.2018]  
