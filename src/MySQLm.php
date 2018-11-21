@@ -40,7 +40,7 @@
                 $host = $blob->host;
                 $port = ($blob->port ? $blob->port : 3306); // Default value for Port
                 $user = $blob->user;
-                $db = $blob->db;
+                $db = $blob->database;
                 $charset = ($blob->charset ? $blob->charset : "utf8"); // Default value for Charset
                 /* PARSE JSON END */
 
@@ -73,74 +73,58 @@
         }
 
         /* Function to open a connection */
-        function connect($host, $port, $user, $pass, $db, $charset = "utf8") 
+        function connect($json) 
         {
             $this->checkExtensions();
 
-            $this->checkVars(array($host, $port, $user, $db), "connect($host, $port, $user, $pass, $db)");            
-
-			if(empty($charset)){
-				$this->$charset="utf8";
-			}
-
-            $this->connection = @new mysqli($host, $user, $pass, $db, $port);
-            
-            if(!$this->checkConnection()){
-                $this->throwError("Could not Connect to the Database, Object Disposed.", 'dispose', $this->dieAfterError);
+            if(empty($json)){
+                $this->lastInternalError = "at connect: NO JSON BLOB GIVEN";
             }
-            
-            if (!$this->connection->set_charset($charset)) {
-                $this->throwError("An Error Occured while loading charset $charset", "dispose", $this->dieAfterError);
-            }
+            else{
+                /* PARSE JSON START */
+                $blob = $json;
+                if(gettype($blob) == "string"){
+                    $blob = json_decode($blob);
+                }
 
-            if($this->connection->connect_error){
-            	$this->throwError("An Error Occured while opening a connection to the database: ".$this->connection->connect_error, "dispose", $this->dieAfterError);
-            }
+                $host = $blob->host;
+                $port = ($blob->port ? $blob->port : 3306); // Default value for Port
+                $user = $blob->user;
+                $db = ($blob->database ? $blob->database : false);
+                $charset = ($blob->charset ? $blob->charset : "utf8"); // Default value for Charset
+                /* PARSE JSON END */
+
+                $this->checkVars(array($host, $port, $user), "connect($host, $port, $user, $pass)");
+
+                if($db){
+                    $this->connection = @new mysqli($host, $user, $pass, $db, $port);
+                }else{
+                    $this->connection = @new mysqli($host.':'.$port, $user, $pass);
+                    $db = "";
+                }
+
+                if(!$this->checkConnection()){
+                    $this->throwError("Could not Connect to the Database, Object Disposed.", 'dispose', $this->dieAfterError);
+                }
                 
-            $this->connectionOpen = true;
-            $this->connectionInfo = array(
-                "Host" => $host,
-                "User" => $user,
-                "Pass" => $pass,
-                "DaBa" => $db,
-                "Port" => $port,
-                "ChSt" => $charset
-            );
-        }
-
-        /* Function to select a Database */
-        function connect_ndb($host, $port, $user, $pass, $charset)
-        {
-            $this->checkExtensions();
-
-            $this->checkVars(array($host, $port, $user), "connect_ndb($host, $port, $user, $pass)");            
-            
-            if(empty($charset)){
-				$this->$charset="utf8";
-			}
-            
-            $this->connection = @new mysqli($host.':'.$port, $user, $pass);
-            
-            if(!$this->checkConnection())
-                $this->throwError("Could not Connect to the Database, Object Disposed.", 'dispose', $this->dieAfterError);
-            
                 if (!$this->connection->set_charset($charset)) {
-                $this->throwError("An Error Occured while loading charset $charset", "dispose", $this->dieAfterError);
+                    $this->throwError("An Error Occured while loading charset $charset", "dispose", $this->dieAfterError);
+                }
+
+                if($this->connection->connect_error){
+                	$this->throwError("An Error Occured while opening a connection to the database: ".$this->connection->connect_error, "dispose", $this->dieAfterError);
+                }
+    
+                $this->connectionOpen = true;
+                $this->connectionInfo = array(
+                    "Host" => $host,
+                    "User" => $user,
+                    "Pass" => $pass,
+                    "DaBa" => $db,
+                    "Port" => $port,
+                    "ChSt" => $charset
+                );
             }
-
-            if($this->connection->connect_error)
-                $this->throwError("An Error Occured while opening a connection to the database: ".$this->connection->connect_error, "dispose", $this->dieAfterError);
-
-            $this->connectionOpen = true;
-            $this->lastInternalError = "at connect_ndb: COULD NOT GIVE ONE PARAMETER TO connectionInfo; DaBa -> NO DATABASE TO CONNECT TO.";
-            $this->connectionInfo = array(
-                "Host" => $host,
-                "User" => $user,
-                "Pass" => $pass,
-                "DaBa" => "",
-                "Port" => $port,
-                "ChSt" => $charset
-            );
         }
 
         /* Function to select database */
