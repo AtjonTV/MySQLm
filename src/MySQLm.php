@@ -6,13 +6,15 @@
      *      OSPL is an License by ATVG-Studios: http://open-source-project-license.atvg-studios.at/
      * 
      *  Documentation of MySQLm can be found on https://gitlab.atvg-studios.at/root/MySQLm/wikis/home .
+     *
+     *  This software uses Semantic Versioning https://semver.org/
      */
-    class MySQLm # Version 1.6.0:21_11_2018
+    class MySQLm # Version 2.0.0 - xx.xx.2019
     {
         /* Private Variables */
-        private $version = "1.6.0";
-        private $version_date = "1.6.0:21_11_2018";
-        private $version_arr = array('major'=>1,'minor'=>6,'patch'=>0, 'release'=>29);
+        private $version = "2.0.0";
+        private $version_date = "2.0.0:xx_xx_2018";
+        private $version_arr = array('major'=>2,'minor'=>0,'patch'=>0, 'release'=>1);
         private $connectionOpen = false;
         private $connectionInfo = null;
         private $connection = null;

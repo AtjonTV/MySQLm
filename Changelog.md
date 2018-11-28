@@ -4,14 +4,11 @@
 
 ***
 
-## Un-Released (In Development)
+## Version 2.0.x
 
-### v1.6.0  
+### v2.0.0-wip+1
+[xx.xx.2019]
 `~` New dataworks framework with JSON
-
-***
-
-## Version 1.6.x
 
 ## Version 1.5.x
 
