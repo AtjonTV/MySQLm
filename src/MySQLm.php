@@ -9,11 +9,11 @@
      *
      *  This software uses Semantic Versioning https://semver.org/
      */
-    class MySQLm # Version 2.0.0 - xx.xx.2019
+    class MySQLm # Version 2.0.0-beta - 28.11.2018
     {
         /* Private Variables */
-        private $version = "2.0.0";
-        private $version_date = "2.0.0:xx_xx_2018";
+        private $version = "2.0.0-beta";
+        private $version_date = "2.0.0-beta:28_11_2018";
         private $version_arr = array('major'=>2,'minor'=>0,'patch'=>0, 'release'=>1);
         private $connectionOpen = false;
         private $connectionInfo = null;
@@ -131,16 +131,16 @@
             }
         }
 
-        /* Function to select database */
-        function selectDatabase($db, $uqe = false)
+        /* Function to select a database */
+        function use($db, $uqe = false)
         {
             if(!$uqe)
                 $db = $this->escapeStringTrim($db);
-            $this->checkVars(array($db), "selectDatabase($db)");
+            $this->checkVars(array($db), "use($db)");
             if($this->connectionOpen)
             {
                 $lresult = $this->connection->query("USE $db;") or
-                    $this->throwError("There was an error while selecting the database. [selectDatabase($db);] [".$this->connection->error."]", "", $this->dieAfterError);
+                    $this->throwError("There was an error while selecting the database. [use($db);] [".$this->connection->error."]", "", $this->dieAfterError);
                 $this->connectionInfo["DaBa"] = $db;
                 $this->lastResult = $lresult;
             }
@@ -239,48 +239,30 @@
             $this->lastResult = $lresult;
         }
 
-        /* Execute query string */
-        function executeCreate($query, $uqe = false)
+        /* Execute create query */
+        function create($query)
         {
-            if(!$uqe)
-                $query = $this->escapeStringTrim($query);
             $this->checkVars(array($query), "executeCreate($query)");
             if($this->connectionOpen)
             {
-                $lresult = $this->connection->query("CREATE ".$query) or
-                    $this->throwError("There was an error while querying the database. [executeCreate($query);] [".$this->connection->error."]", "", $this->dieAfterError);
+                $sql = MySQLm_Compiler::compile($query);
+                $lresult = $this->connection->query($sql) or
+                    $this->throwError("There was an error while querying the database. [create($query);] [".$this->connection->error."]", "", $this->dieAfterError);
                 $this->lastResult = $lresult;
             }
             else
                 $this->throwError("ERROR, the connection seams to be closed. Run connect() or reconnect() to make a connection", "x", $this->dieAfterError);
         }
 
-        /* Execute query string */
-        function executeUse($query, $uqe = false)
+        /* Execute select query */
+        function select($query, $returnType)
         {
-            if(!$uqe)
-                $query = $this->escapeStringTrim($query);
-            $this->checkVars(array($query), "executeUse($query)");
+            $this->checkVars(array($query), "select($query)");
             if($this->connectionOpen)
             {
-                $lresult = $this->connection->query("USE ".$query) or
-                    $this->throwError("There was an error while querying the database. [executeUse($query);] [".$this->connection->error."]", "", $this->dieAfterError);
-                $this->lastResult = $lresult;
-            }
-            else
-                $this->throwError("ERROR, the connection seams to be closed. Run connect() or reconnect() to make a connection", "x", $this->dieAfterError);
-        }
-
-        /* Execute query string */
-        function executeSelect($query, $returnType, $uqe = false)
-        {
-            if(!$uqe)
-                $query = $this->escapeStringTrim($query);
-            $this->checkVars(array($query), "executeSelect($query)");
-            if($this->connectionOpen)
-            {
-                $lresult = $this->connection->query("SELECT ".$query)
-                    or $this->throwError("Error while querying the Database. [executeSelect($query, $returnType);] [".$this->connection->error."]", "x", $this->dieAfterError);
+                $sql = MySQLm_Compiler::compile($query);
+                $lresult = $this->connection->query($sql)
+                    or $this->throwError("Error while querying the Database. [select($query, $returnType);] [".$this->connection->error."]", "x", $this->dieAfterError);
                 if($returnType == E_ReturnType::TWODIMENSIONAL_ARRAY || $returnType == E_ReturnType::TWO_D_ARRAY || $returnType === 2)
                 {
                     $llresult = array();
@@ -302,16 +284,45 @@
                 $this->throwError("ERROR, the connection seams to be closed. Run connect() or reconnect() to make a connection", "x", $this->dieAfterError);
         }
 
-        /* Execute query string */
-        function executeInsert($query, $uqe = false)
+        /* Execute insert query */
+        function insert($query)
         {
-            if(!$uqe)
-                $query = $this->escapeStringTrim($query);
-            $this->checkVars(array($query), "executeInsert($query)");
+            $this->checkVars(array($query), "insert($query)");
             if($this->connectionOpen)
             {
-                $lresult = $this->connection->query("INSERT ".$query) or
-                    $this->throwError("There was an error while querying the database. [executeInsert($query);] [".$this->connection->error."]", "", $this->dieAfterError);
+                $sql = MySQLm_Compiler::compile($query);
+                $lresult = $this->connection->query($sql) or
+                    $this->throwError("There was an error while querying the database. [insert($query);] [".$this->connection->error."]", "", $this->dieAfterError);
+                $this->lastResult = $lresult;
+            }
+            else
+                $this->throwError("ERROR, the connection seams to be closed. Run connect() or reconnect() to make a connection", "x", $this->dieAfterError);
+        }
+
+        /* Execute delete query */
+        function delete($query)
+        {
+            $this->checkVars(array($query), "delete($query)");
+            if($this->connectionOpen)
+            {
+                $sql = MySQLm_Compiler::compile($query);
+                $lresult = $this->connection->query($sql) or
+                    $this->throwError("There was an error while querying the database. [delete($query);] [".$this->connection->error."]", "", $this->dieAfterError);
+                $this->lastResult = $lresult;
+            }
+            else
+                $this->throwError("ERROR, the connection seams to be closed. Run connect() or reconnect() to make a connection", "x", $this->dieAfterError);
+        }
+
+        /* Execute update query */
+        function update($query)
+        {
+            $this->checkVars(array($query), "update($query)");
+            if($this->connectionOpen)
+            {
+                $sql = MySQLm_Compiler::compile($query);
+                $lresult = $this->connection->query($sql) or
+                    $this->throwError("There was an error while querying the database. [update($query);] [".$this->connection->error."]", "", $this->dieAfterError);
                 $this->lastResult = $lresult;
             }
             else
@@ -319,47 +330,14 @@
         }
 
         /* Execute query string */
-        function executeDelete($query, $uqe = false)
+        function drop($query)
         {
-            if(!$uqe)
-                $query = $this->escapeStringTrim($query);
-            $this->checkVars(array($query), "executeDelete($query)");
+            $this->checkVars(array($query), "drop($query)");
             if($this->connectionOpen)
             {
-                $lresult = $this->connection->query("DELETE ".$query) or
-                    $this->throwError("There was an error while querying the database. [executeDelete($query);] [".$this->connection->error."]", "", $this->dieAfterError);
-                $this->lastResult = $lresult;
-            }
-            else
-                $this->throwError("ERROR, the connection seams to be closed. Run connect() or reconnect() to make a connection", "x", $this->dieAfterError);
-        }
-
-        /* Execute query string */
-        function executeUpdate($query, $uqe = false)
-        {
-            if(!$uqe)
-                $query = $this->escapeStringTrim($query);
-            $this->checkVars(array($query), "executeUpdate($query)");
-            if($this->connectionOpen)
-            {
-                $lresult = $this->connection->query("UPDATE ".$query) or
-                    $this->throwError("There was an error while querying the database. [executeUpdate($query);] [".$this->connection->error."]", "", $this->dieAfterError);
-                $this->lastResult = $lresult;
-            }
-            else
-                $this->throwError("ERROR, the connection seams to be closed. Run connect() or reconnect() to make a connection", "x", $this->dieAfterError);
-        }
-
-        /* Execute query string */
-        function executeDrop($query, $uqe = false)
-        {
-            if(!$uqe)
-            $query = $this->escapeStringTrim($query);
-            $this->checkVars(array($query), "executeDrop($query)");
-            if($this->connectionOpen)
-            {
-                $lresult = $this->connection->query("DROP ".$query) or
-                    $this->throwError("There was an error while querying the database. [executeDrop($query);] [".$this->connection->error."]", "", $this->dieAfterError);
+                $sql = MySQLm_Compiler::compile($query);
+                $lresult = $this->connection->query($sql) or
+                    $this->throwError("There was an error while querying the database. [drop($query);] [".$this->connection->error."]", "", $this->dieAfterError);
                 $this->lastResult = $lresult;
             }
             else
@@ -649,24 +627,6 @@
             curl_close($c);
             return $res;
         }
-
-        private function curlGET_FILE($url, $file)
-        {
-            set_time_limit(0);
-            $fp = fopen ($file, 'w+');
-            $ch = curl_init($url);
-            curl_setopt($ch, CURLOPT_TIMEOUT, 50);
-            curl_setopt($ch, CURLOPT_USERAGENT,getUserAgent());
-            curl_setopt($ch, CURLOPT_FILE, $fp); 
-            curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-            $headers = array(
-                'Content-Type:application/json'
-            );
-            curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-            curl_exec($ch); 
-            curl_close($ch);
-            fclose($fp);
-        }
         /* </UPDATE> */
 
         /* Return Client/Server Information */
@@ -728,5 +688,10 @@
         const MYSQL_TABLE = 1;
         const TWODIMENSIONAL_ARRAY = 2;
         const TWO_D_ARRAY = 2;
+    }
+
+    abstract class MySQLm_Compiler
+    {
+        function compile($b,$f){$b=(gettype($b)=="object")?$b:json_decode($b);$s="";if(strpos($f,"create")!==false){$s="CREATE ";if($b->type=="database"){$s.="DATABASE '".htmlspecialchars($b->name)."';";}else if($b->type=="table"){$s.="TABLE '".htmlspecialchars($b->name)."' (";foreach($b->columns as $k=>$t){$k=htmlspecialchars($k);$t=htmlspecialchars($t);$s.="'$k' $t, ";}$s=substr_replace($s,"",count($s)-3,2);$s.=");";}}else if(strpos($f,"insert")!==false){$s="";foreach($b->rows as $r){$s.="INSERT INTO ".htmlspecialchars($b->table)." (";foreach($r as $k=>$v){$k=htmlspecialchars($k);$s.=$k.", ";}$s=substr_replace($s,"",count($s)-3,2);$s.=") VALUES (";foreach($r as $k=>$v){$v=htmlspecialchars($v);$s.="'$v', ";}$s=substr_replace($s,"",count($s)-3,2);$s.=");";}}else if(strpos($f, "select") !== false){$s="";$s.="SELECT ";foreach($b->columns as $k=>$v){$v=htmlspecialchars($v);$s.=$v.", ";}$s=substr_replace($s,"",count($s)-3,2);$s.=" FROM ".htmlspecialchars($b->table)." WHERE ";foreach($b->where as $r){$t=htmlspecialchars($r->type);foreach($r as $k=>$v){if($k!="type"){$k=htmlspecialchars($k);$v=htmlspecialchars($v);$s.="$k='$v' $t ";}}$l=strlen($t)+3;$s=substr_replace($s,"",count($s)-$l,$l);}$s.=";";}else if(strpos($f,"update")!==false){$s="UPDATE ".htmlspecialchars($b->table)." SET ";foreach($b->rows as $k=>$v){$k=htmlspecialchars($k);$v=htmlspecialchars($v);$s.="$k='$v', ";}$s=substr_replace($s,"",count($s)-3,2);$s.=" WHERE ";foreach($b->where as $r){$t=htmlspecialchars($r->type);foreach($r as $k=>$v){  if($k!="type"){$k=htmlspecialchars($k);$v=htmlspecialchars($v);$s.="$k='$v' $t ";}}$l=strlen($t)+3;$s=substr_replace($s,"",count($s)-$l,$l);}$s.=";";}else if(strpos($f,"delete")!==false){$s="DELETE FROM ".htmlspecialchars($b->table)." WHERE ";foreach($b->where as $r){$t=htmlspecialchars($r->type);foreach($r as $k=>$v){if($k!="type"){$k=htmlspecialchars($k);$v=htmlspecialchars($v);$s.="$k='$v' $t ";}}$l=strlen($t)+3;$s=substr_replace($s,"",count($s)-$l,$l);}$s.=";";}else if(strpos($f,"drop")!==false){$s="DROP ";if($b->type=="database"){$s.="DATABASE '".htmlspecialchars($b->name)."';";}else if($b->type=="table"){$s.="TABLE '".htmlspecialchars($b->name)."';";}}return $s;}
     }
 ?>

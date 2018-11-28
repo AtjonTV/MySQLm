@@ -3,7 +3,7 @@ MySQLm 2 is an 'Library' made to be used to connect to a MySQL Server.
 MySQLm 2 is made with OOP (Object Oriented Programming) and used MySQLi [OOP]  
 MySQLm 2 uses a JSON interface called SQJ (Structured Query JSON) which is defined by the SQJ-Definition by ATVG-Studios
 
-The newest version of MySQLm is **[2.0.0](https://gitlab.atvg-studios.at/root/MySQLm/tags/v2.0.0)** Released on **XX XXXX 2019**
+The newest version of MySQLm is **[2.0.0-beta.1](https://gitlab.atvg-studios.at/root/MySQLm/tags/v2.0.0-beta.1)** Released on **XX XXXX 2019**
 
 Development branch:  
 `https://gitlab.atvg-studios.at/root/MySQLm/tree/dev-2.0`

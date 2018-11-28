@@ -6,8 +6,8 @@
 
 ## Version 2.0.x
 
-### v2.0.0-wip+1
-[xx.xx.2019]
+### v2.0.0-beta.1
+[28.11.2018]
 `~` New dataworks framework with JSON
 
 ## Version 1.5.x
