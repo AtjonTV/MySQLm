@@ -1,6 +1,6 @@
 Welcome to the MySQLm wiki!
 
-This wiki is for the version **[2.0.0](https://gitlab.atvg-studios.at/root/MySQLm/tags/v2.0.0)**.
+This wiki is for the version **[2.0.0-beta.1](https://gitlab.atvg-studios.at/root/MySQLm/tags/v2.0.0-beta.1)**.
 
 This is a much more detaild and better documented wiki version to bring a finishing touch to this project.
 
@@ -16,4 +16,7 @@ Here are the links:
 7. [Update data in Tables](Update.md)
 8. [Delete data in Tables](Delete.md)
 9. [Drop Tabels and Databases](Drop.md)
-10. [Other Functions included in MySQLm](Other-Functions.md)
+
+----
+
+[Next](Getting-Started.md)

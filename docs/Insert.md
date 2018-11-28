@@ -40,3 +40,7 @@ $d = array (
 );
 $msql->insert($b);
 ```
+
+----
+
+[Prior](Changeing-Database.md) - [Next](Select.md)

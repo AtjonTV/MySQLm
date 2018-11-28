@@ -111,3 +111,7 @@ $d = array (
 $msql = new MySQLm('');
 $msql->connect($b);
 ```
+
+----
+
+[Prior](Getting-Started.md) - [Next](Changeing-Database.md)

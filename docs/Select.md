@@ -45,3 +45,7 @@ $d = array (
 );
 $msql->select($b);
 ```
+
+----
+
+[Prior](Insert.md) - [Next](Update.md)

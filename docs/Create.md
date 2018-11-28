@@ -62,3 +62,7 @@ $d = array (
 );
 $msql->create($b);
 ```
+
+----
+
+[Prior](Changeing-Database.md) - [Next](Insert.md)

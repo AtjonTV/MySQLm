@@ -38,3 +38,7 @@ $d = array (
 );
 $msql->delete($b);
 ```
+
+----
+
+[Prior](Update.md) - [Next](Drop.md)

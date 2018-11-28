@@ -47,3 +47,7 @@ $d = array (
 );
 $msql->drop($b);
 ```
+
+----
+
+[Prior](Drop.md)

@@ -6,3 +6,7 @@ You can then include it like so:
 ```php
 include 'MySQLm.php';
 ```
+
+----
+
+[Prior](Index.md) - [Next](Connecting.md)
