@@ -50,4 +50,4 @@ $msql->drop($b);
 
 ----
 
-[Prior](Drop.md)
+[Prior](Delete.md)

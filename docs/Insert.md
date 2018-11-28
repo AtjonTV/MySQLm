@@ -43,4 +43,4 @@ $msql->insert($b);
 
 ----
 
-[Prior](Changeing-Database.md) - [Next](Select.md)
+[Prior](Create.md) - [Next](Select.md)
